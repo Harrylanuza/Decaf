@@ -12,6 +12,7 @@
 		000000000000000000000062 /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000031 /* Artwork.swift */; };
 		000000000000000000000063 /* FavoriteItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000032 /* FavoriteItem.swift */; };
 		000000000000000000000066 /* ArtworkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000041 /* ArtworkCard.swift */; };
+		000000000000000000000076 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000046 /* OnboardingView.swift */; };
 		000000000000000000000067 /* FavoriteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000042 /* FavoriteButton.swift */; };
 		000000000000000000000068 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000043 /* FavoritesView.swift */; };
 		000000000000000000000069 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000044 /* FeedView.swift */; };
@@ -29,6 +30,7 @@
 		000000000000000000000031 /* Artwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
 		000000000000000000000032 /* FavoriteItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteItem.swift; sourceTree = "<group>"; };
 		000000000000000000000041 /* ArtworkCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkCard.swift; sourceTree = "<group>"; };
+		000000000000000000000046 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		000000000000000000000042 /* FavoriteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteButton.swift; sourceTree = "<group>"; };
 		000000000000000000000043 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		000000000000000000000044 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				000000000000000000000042 /* FavoriteButton.swift */,
 				000000000000000000000043 /* FavoritesView.swift */,
 				000000000000000000000044 /* FeedView.swift */,
+				000000000000000000000046 /* OnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				000000000000000000000062 /* Artwork.swift in Sources */,
 				000000000000000000000063 /* FavoriteItem.swift in Sources */,
 				000000000000000000000066 /* ArtworkCard.swift in Sources */,
+				000000000000000000000076 /* OnboardingView.swift in Sources */,
 				000000000000000000000067 /* FavoriteButton.swift in Sources */,
 				000000000000000000000068 /* FavoritesView.swift in Sources */,
 				000000000000000000000069 /* FeedView.swift in Sources */,

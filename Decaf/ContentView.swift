@@ -2,14 +2,27 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab: Tab = .discover
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     enum Tab { case discover, cup }
 
     var body: some View {
-        content
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                tabBar
+        ZStack {
+            content
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    tabBar
+                }
+
+            if !hasSeenOnboarding {
+                OnboardingView {
+                    withAnimation(.easeInOut(duration: 0.6)) {
+                        hasSeenOnboarding = true
+                    }
+                }
+                .transition(.opacity)
+                .zIndex(1)
             }
+        }
     }
 
     // MARK: - Content
