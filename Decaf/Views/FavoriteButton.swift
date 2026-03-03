@@ -23,7 +23,8 @@ struct FavoriteButton: View {
                 .animation(.easeInOut(duration: 0.2), value: isFavorited)
         }
         .frame(width: 44, height: 44)
-        .padding(12)
+        .padding(.top, 20)
+        .padding(.trailing, 20)
     }
 
     private func toggle() {

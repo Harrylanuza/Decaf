@@ -12,13 +12,14 @@
 		000000000000000000000062 /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000031 /* Artwork.swift */; };
 		000000000000000000000063 /* FavoriteItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000032 /* FavoriteItem.swift */; };
 		000000000000000000000066 /* ArtworkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000041 /* ArtworkCard.swift */; };
-		000000000000000000000076 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000046 /* OnboardingView.swift */; };
 		000000000000000000000067 /* FavoriteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000042 /* FavoriteButton.swift */; };
 		000000000000000000000068 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000043 /* FavoritesView.swift */; };
 		000000000000000000000069 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000044 /* FeedView.swift */; };
 		000000000000000000000071 /* MetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000051 /* MetService.swift */; };
-		000000000000000000000074 /* RijksmuseumService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000053 /* RijksmuseumService.swift */; };
 		000000000000000000000073 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000021 /* Assets.xcassets */; };
+		000000000000000000000074 /* RijksmuseumService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000053 /* RijksmuseumService.swift */; };
+		000000000000000000000076 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000046 /* OnboardingView.swift */; };
+		000000000000000000000078 /* BrewingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000047 /* BrewingView.swift */; };
 		000000000000000000000081 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000080 /* Theme.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,10 +31,11 @@
 		000000000000000000000031 /* Artwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
 		000000000000000000000032 /* FavoriteItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteItem.swift; sourceTree = "<group>"; };
 		000000000000000000000041 /* ArtworkCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkCard.swift; sourceTree = "<group>"; };
-		000000000000000000000046 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		000000000000000000000042 /* FavoriteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteButton.swift; sourceTree = "<group>"; };
 		000000000000000000000043 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		000000000000000000000044 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		000000000000000000000046 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		000000000000000000000047 /* BrewingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewingView.swift; sourceTree = "<group>"; };
 		000000000000000000000051 /* MetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetService.swift; sourceTree = "<group>"; };
 		000000000000000000000053 /* RijksmuseumService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RijksmuseumService.swift; sourceTree = "<group>"; };
 		000000000000000000000080 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -50,7 +52,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		000000000000000000000002 /* rootGroup */ = {
+		000000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000020 /* Decaf */,
@@ -93,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000041 /* ArtworkCard.swift */,
+				000000000000000000000047 /* BrewingView.swift */,
 				000000000000000000000042 /* FavoriteButton.swift */,
 				000000000000000000000043 /* FavoritesView.swift */,
 				000000000000000000000044 /* FeedView.swift */,
@@ -138,7 +141,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					000000000000000000000005 = {
 						CreatedOnToolsVersion = 15.0;
@@ -184,6 +187,7 @@
 				000000000000000000000062 /* Artwork.swift in Sources */,
 				000000000000000000000063 /* FavoriteItem.swift in Sources */,
 				000000000000000000000066 /* ArtworkCard.swift in Sources */,
+				000000000000000000000078 /* BrewingView.swift in Sources */,
 				000000000000000000000076 /* OnboardingView.swift in Sources */,
 				000000000000000000000067 /* FavoriteButton.swift in Sources */,
 				000000000000000000000068 /* FavoritesView.swift in Sources */,
@@ -217,6 +221,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
@@ -229,8 +234,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_EXCEPTION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 23G39PS429;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -253,6 +260,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -278,6 +286,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
@@ -290,8 +299,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_EXCEPTION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 23G39PS429;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -306,6 +317,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
@@ -386,7 +398,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = 000000000000000000000001 /* Project object */;
 }

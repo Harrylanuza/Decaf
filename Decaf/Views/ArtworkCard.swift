@@ -1,8 +1,23 @@
 import SwiftUI
+import SwiftData
 
 struct ArtworkCard: View {
     let artwork: Artwork
     @State private var titleExpanded = false
+
+    // Double-tap save confirmation state
+    @State private var cupOpacity: Double = 0
+    @State private var cupScale: CGFloat = 0.75
+    @State private var cupOffset: CGFloat = 0
+
+    @Environment(\.modelContext) private var context
+    @Query private var matches: [FavoriteItem]
+
+    init(artwork: Artwork) {
+        self.artwork = artwork
+        let id = artwork.id
+        _matches = Query(filter: #Predicate<FavoriteItem> { $0.artworkID == id })
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,6 +28,7 @@ struct ArtworkCard: View {
         .background(Theme.background)
         .overlay(alignment: .topTrailing) {
             FavoriteButton(artwork: artwork)
+                .safeAreaPadding(.top)
         }
     }
 
@@ -22,15 +38,16 @@ struct ArtworkCard: View {
         AsyncImage(url: artwork.imageURL) { phase in
             switch phase {
             case .empty:
-                ProgressView()
-                    .tint(Theme.muted)
+                BrewingView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity)
             case .success(let image):
                 image
                     .resizable()
                     .scaledToFit()
                     // Gentle shadow lifts the painting off the linen ground.
                     .shadow(color: Theme.ink.opacity(0.10), radius: 18, x: 0, y: 6)
+                    .transition(.opacity.animation(.easeInOut(duration: 0.5)))
             case .failure:
                 Image(systemName: "photo")
                     .font(.system(size: 40))
@@ -42,6 +59,21 @@ struct ArtworkCard: View {
         }
         .padding(.horizontal, 28)
         .padding(.vertical, 24)
+        // Make the full padded area respond to gestures, not just the image pixels.
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            performDoubleTap()
+        }
+        .overlay {
+            // Double-tap save confirmation: cup rises and fades.
+            Image(systemName: "cup.and.saucer")
+                .font(.system(size: 52, weight: .ultraLight))
+                .foregroundStyle(Theme.ink)
+                .opacity(cupOpacity)
+                .scaleEffect(cupScale)
+                .offset(y: cupOffset)
+                .allowsHitTesting(false)
+        }
     }
 
     private var caption: some View {
@@ -82,6 +114,38 @@ struct ArtworkCard: View {
             .padding(.horizontal, 28)
             .padding(.top, 14)
             .padding(.bottom, 24)
+        }
+    }
+
+    // MARK: - Double-tap save
+
+    private func performDoubleTap() {
+        if matches.isEmpty {
+            context.insert(FavoriteItem(from: artwork))
+        }
+        animateSaveCup()
+    }
+
+    private func animateSaveCup() {
+        // Reset to start position.
+        cupOpacity = 0
+        cupScale   = 0.75
+        cupOffset  = 0
+
+        // Phase 1: appear — quick bloom up to full size.
+        withAnimation(.easeOut(duration: 0.18)) {
+            cupOpacity = 0.72
+            cupScale   = 1.0
+        }
+
+        // Phase 2: drift up and fade — slow and unhurried.
+        Task {
+            try? await Task.sleep(for: .milliseconds(350))
+            withAnimation(.easeInOut(duration: 0.65)) {
+                cupOpacity = 0
+                cupScale   = 1.1
+                cupOffset  = -18
+            }
         }
     }
 }

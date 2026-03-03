@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+
+  <!-- Painting canvas background: warm near-black with soft central light -->
+  <radialGradient id="bgGrad" cx="50%" cy="42%" r="55%">
+    <stop offset="0%"   stop-color="#2A1608"/>
+    <stop offset="100%" stop-color="#0C0602"/>
+  </radialGradient>
+
+  <!-- Table surface: dark warm wood -->
+  <linearGradient id="tableGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#3C2010"/>
+    <stop offset="60%"  stop-color="#1E0E06"/>
+    <stop offset="100%" stop-color="#100804"/>
+  </linearGradient>
+
+  <!-- Cup body: ceramic sheen, light from upper-left -->
+  <linearGradient id="cupGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%"   stop-color="#A89060"/>
+    <stop offset="18%"  stop-color="#EDE0C0"/>
+    <stop offset="55%"  stop-color="#F4EDD8"/>
+    <stop offset="82%"  stop-color="#D8C898"/>
+    <stop offset="100%" stop-color="#9A7840"/>
+  </linearGradient>
+
+  <!-- Cup rim top surface -->
+  <linearGradient id="rimGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#F8F2E0"/>
+    <stop offset="100%" stop-color="#C8B478"/>
+  </linearGradient>
+
+  <!-- Saucer: warm cream ceramic -->
+  <linearGradient id="saucerGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%"   stop-color="#B0946A"/>
+    <stop offset="35%"  stop-color="#EAD9A8"/>
+    <stop offset="65%"  stop-color="#EDD8A4"/>
+    <stop offset="100%" stop-color="#B89060"/>
+  </linearGradient>
+
+  <!-- Handle gradient -->
+  <linearGradient id="handleGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%"   stop-color="#DDD0A0"/>
+    <stop offset="50%"  stop-color="#F0E4C0"/>
+    <stop offset="100%" stop-color="#B09060"/>
+  </linearGradient>
+
+  <!-- Frame top/bottom band: simulate gilt molding profile -->
+  <linearGradient id="fTopGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#1A0C04"/>
+    <stop offset="12%"  stop-color="#B88828"/>
+    <stop offset="28%"  stop-color="#E8C050"/>
+    <stop offset="48%"  stop-color="#9A7022"/>
+    <stop offset="64%"  stop-color="#C8A038"/>
+    <stop offset="80%"  stop-color="#7A5018"/>
+    <stop offset="100%" stop-color="#2A1608"/>
+  </linearGradient>
+
+  <linearGradient id="fBottomGrad" x1="0" y1="1" x2="0" y2="0">
+    <stop offset="0%"   stop-color="#1A0C04"/>
+    <stop offset="12%"  stop-color="#B88828"/>
+    <stop offset="28%"  stop-color="#E8C050"/>
+    <stop offset="48%"  stop-color="#9A7022"/>
+    <stop offset="64%"  stop-color="#C8A038"/>
+    <stop offset="80%"  stop-color="#7A5018"/>
+    <stop offset="100%" stop-color="#2A1608"/>
+  </linearGradient>
+
+  <linearGradient id="fLeftGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%"   stop-color="#1A0C04"/>
+    <stop offset="12%"  stop-color="#B88828"/>
+    <stop offset="28%"  stop-color="#E8C050"/>
+    <stop offset="48%"  stop-color="#9A7022"/>
+    <stop offset="64%"  stop-color="#C8A038"/>
+    <stop offset="80%"  stop-color="#7A5018"/>
+    <stop offset="100%" stop-color="#2A1608"/>
+  </linearGradient>
+
+  <linearGradient id="fRightGrad" x1="1" y1="0" x2="0" y2="0">
+    <stop offset="0%"   stop-color="#1A0C04"/>
+    <stop offset="12%"  stop-color="#B88828"/>
+    <stop offset="28%"  stop-color="#E8C050"/>
+    <stop offset="48%"  stop-color="#9A7022"/>
+    <stop offset="64%"  stop-color="#C8A038"/>
+    <stop offset="80%"  stop-color="#7A5018"/>
+    <stop offset="100%" stop-color="#2A1608"/>
+  </linearGradient>
+
+</defs>
+
+<!-- ═══════════════════════════════════════════
+     APP ICON GROUND
+     ═══════════════════════════════════════════ -->
+<rect width="512" height="512" fill="#120802"/>
+
+<!-- ═══════════════════════════════════════════
+     ORNATE GILT FRAME
+     ═══════════════════════════════════════════ -->
+
+<!-- Outermost dark edge (shadow) -->
+<rect x="14" y="14" width="484" height="484" fill="#0E0804"/>
+
+<!-- Top frame band -->
+<rect x="14" y="14" width="484" height="68" fill="url(#fTopGrad)"/>
+<!-- Bottom frame band -->
+<rect x="14" y="430" width="484" height="68" fill="url(#fBottomGrad)"/>
+<!-- Left frame band -->
+<rect x="14" y="14" width="68" height="484" fill="url(#fLeftGrad)"/>
+<!-- Right frame band -->
+<rect x="430" y="14" width="68" height="484" fill="url(#fRightGrad)"/>
+
+<!-- Inner dark slip line (rabbet) -->
+<rect x="78" y="78" width="356" height="356" fill="#1C0E06"/>
+<rect x="80" y="80" width="352" height="352" fill="#0A0502"/>
+
+<!-- ═══════════════════════════════════════════
+     CORNER ROSETTES
+     Each corner of the frame gets an ornamental boss.
+     ═══════════════════════════════════════════ -->
+
+<!-- Top-left rosette -->
+<g transform="translate(48,48)">
+  <circle r="16" fill="#6A4010"/>
+  <circle r="14" fill="#C89828"/>
+  <!-- 8 petals -->
+  <ellipse rx="4" ry="10" fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(45)"  fill="#D4A838" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(90)"  fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(135)" fill="#D4A838" opacity="0.9"/>
+  <circle r="7"  fill="#8A6020"/>
+  <circle r="5"  fill="#D4A030"/>
+  <circle r="2.5" fill="#F0CC60"/>
+</g>
+
+<!-- Top-right rosette -->
+<g transform="translate(464,48)">
+  <circle r="16" fill="#6A4010"/>
+  <circle r="14" fill="#C89828"/>
+  <ellipse rx="4" ry="10" fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(45)"  fill="#D4A838" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(90)"  fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(135)" fill="#D4A838" opacity="0.9"/>
+  <circle r="7"  fill="#8A6020"/>
+  <circle r="5"  fill="#D4A030"/>
+  <circle r="2.5" fill="#F0CC60"/>
+</g>
+
+<!-- Bottom-left rosette -->
+<g transform="translate(48,464)">
+  <circle r="16" fill="#6A4010"/>
+  <circle r="14" fill="#C89828"/>
+  <ellipse rx="4" ry="10" fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(45)"  fill="#D4A838" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(90)"  fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(135)" fill="#D4A838" opacity="0.9"/>
+  <circle r="7"  fill="#8A6020"/>
+  <circle r="5"  fill="#D4A030"/>
+  <circle r="2.5" fill="#F0CC60"/>
+</g>
+
+<!-- Bottom-right rosette -->
+<g transform="translate(464,464)">
+  <circle r="16" fill="#6A4010"/>
+  <circle r="14" fill="#C89828"/>
+  <ellipse rx="4" ry="10" fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(45)"  fill="#D4A838" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(90)"  fill="#E8C050" opacity="0.9"/>
+  <ellipse rx="4" ry="10" transform="rotate(135)" fill="#D4A838" opacity="0.9"/>
+  <circle r="7"  fill="#8A6020"/>
+  <circle r="5"  fill="#D4A030"/>
+  <circle r="2.5" fill="#F0CC60"/>
+</g>
+
+<!-- ═══════════════════════════════════════════
+     PAINTING CANVAS  (82,82) → (430,430)
+     ═══════════════════════════════════════════ -->
+<rect x="82" y="82" width="348" height="348" fill="url(#bgGrad)"/>
+
+<!-- TABLE SURFACE — lower third of canvas -->
+<!-- Table top edge: thin lighter strip, light from above -->
+<rect x="82" y="318" width="348" height="3" fill="#5A3418" opacity="0.85"/>
+<!-- Table body, dark -->
+<rect x="82" y="321" width="348" height="109" fill="url(#tableGrad)"/>
+<!-- Subtle table highlight: faint warm stripe just below edge -->
+<rect x="82" y="321" width="348" height="6" fill="#7A4820" opacity="0.35"/>
+
+<!-- ═══════════════════════════════════════════
+     STILL LIFE: SAUCER
+     ═══════════════════════════════════════════ -->
+
+<!-- Cast shadow on table from saucer+cup -->
+<ellipse cx="256" cy="323" rx="82" ry="9" fill="#060302" opacity="0.75"/>
+
+<!-- Saucer underside / depth ring -->
+<ellipse cx="256" cy="316" rx="76" ry="11" fill="#6A4020" opacity="0.55"/>
+
+<!-- Saucer main plate -->
+<ellipse cx="256" cy="312" rx="74" ry="11" fill="url(#saucerGrad)"/>
+
+<!-- Saucer rim highlight (lighter top edge, light source upper-left) -->
+<ellipse cx="250" cy="309" rx="66" ry="8"  fill="#EFE0B0" opacity="0.55"/>
+
+<!-- Saucer centre well (slight depression where cup sits) -->
+<ellipse cx="256" cy="311" rx="34" ry="5"  fill="#C0A868"/>
+<ellipse cx="254" cy="310" rx="28" ry="4"  fill="#D4B87A" opacity="0.6"/>
+
+<!-- ═══════════════════════════════════════════
+     STILL LIFE: ESPRESSO CUP
+     ═══════════════════════════════════════════ -->
+
+<!-- Cup body — trapezoid: wider at top rim, narrower at base -->
+<path d="
+  M 216 222
+  C 214 290, 220 310, 228 312
+  L 284 312
+  C 292 310, 298 290, 296 222
+  Z
+" fill="url(#cupGrad)"/>
+
+<!-- Painted shadow on left face of cup -->
+<path d="
+  M 216 222
+  C 214 290, 220 310, 228 312
+  L 236 312
+  C 230 308, 226 288, 228 222
+  Z
+" fill="#80603A" opacity="0.55"/>
+
+<!-- Subtle highlight streak on right-center (ceramic glaze) -->
+<path d="
+  M 272 230 C 276 260, 275 285, 272 308
+" fill="none" stroke="#F8F0DC" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+
+<!-- Cup base foot-ring -->
+<ellipse cx="256" cy="312" rx="29" ry="4.5" fill="#D8CA90"/>
+
+<!-- Cup rim — top ellipse -->
+<ellipse cx="256" cy="222" rx="40" ry="8"   fill="url(#rimGrad)"/>
+
+<!-- Coffee liquid — dark surface inside cup -->
+<ellipse cx="256" cy="222" rx="34" ry="6.5" fill="#150A04"/>
+
+<!-- Coffee crema / surface variation -->
+<ellipse cx="250" cy="221" rx="16" ry="4"   fill="#2E1608" opacity="0.9"/>
+<ellipse cx="246" cy="220" rx="7"  ry="2.5" fill="#4A2410" opacity="0.7"/>
+
+<!-- Tiny specular on crema (warm highlight) -->
+<ellipse cx="243" cy="219" rx="3" ry="1.5" fill="#7A5030" opacity="0.5"/>
+
+<!-- ═══════════════════════════════════════════
+     HANDLE (right side)
+     ═══════════════════════════════════════════ -->
+
+<!-- Handle outer arc -->
+<path d="M 296 242 Q 348 246 348 272 Q 348 298 296 298"
+      fill="none"
+      stroke="url(#handleGrad)"
+      stroke-width="13"
+      stroke-linecap="round"/>
+
+<!-- Handle inner shadow (painted depth of the loop) -->
+<path d="M 296 242 Q 342 247 342 272 Q 342 296 296 298"
+      fill="none"
+      stroke="#90703A"
+      stroke-width="5"
+      stroke-linecap="round"
+      opacity="0.7"/>
+
+<!-- Handle inner highlight -->
+<path d="M 296 244 Q 338 248 338 270"
+      fill="none"
+      stroke="#F4EAC8"
+      stroke-width="2"
+      stroke-linecap="round"
+      opacity="0.35"/>
+
+<!-- ═══════════════════════════════════════════
+     ATMOSPHERIC VIGNETTE over canvas
+     Darkens the corners of the painting, true to
+     the Dutch Golden Age style.
+     ═══════════════════════════════════════════ -->
+<radialGradient id="vignette" cx="50%" cy="45%" r="58%">
+  <stop offset="55%"  stop-color="#000000" stop-opacity="0"/>
+  <stop offset="100%" stop-color="#000000" stop-opacity="0.55"/>
+</radialGradient>
+<rect x="82" y="82" width="348" height="348" fill="url(#vignette)"/>
+
+</svg>
