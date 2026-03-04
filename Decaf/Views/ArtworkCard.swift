@@ -9,6 +9,7 @@ struct ArtworkCard: View {
     @State private var cupOpacity: Double = 0
     @State private var cupScale: CGFloat = 0.75
     @State private var cupOffset: CGFloat = 0
+    @State private var animationTask: Task<Void, Never>?
 
     @Environment(\.modelContext) private var context
     @Query private var matches: [FavoriteItem]
@@ -26,9 +27,14 @@ struct ArtworkCard: View {
             caption
         }
         .background(Theme.background)
-        .overlay(alignment: .topTrailing) {
-            FavoriteButton(artwork: artwork)
-                .safeAreaPadding(.top)
+        // Single overlay spanning the full card width keeps both buttons in the
+        // same render pass, avoiding z-order ambiguity between separate overlays.
+        .overlay(alignment: .top) {
+            HStack(alignment: .top, spacing: 0) {
+                ShareButton(artwork: artwork)
+                Spacer()
+                FavoriteButton(artwork: artwork)
+            }
         }
     }
 
@@ -120,13 +126,29 @@ struct ArtworkCard: View {
     // MARK: - Double-tap save
 
     private func performDoubleTap() {
-        if matches.isEmpty {
-            context.insert(FavoriteItem(from: artwork))
-        }
+        // Only save and animate when the artwork isn't already in the cup.
+        // (Unlike Instagram's heart, double-tapping a saved painting does nothing —
+        // there's no feedback that would be honest here.)
+        guard matches.isEmpty else { return }
+        let item = FavoriteItem(from: artwork)
+        context.insert(item)
         animateSaveCup()
+        // Download and cache the image so the cup works offline.
+        Task {
+            if let path = try? await ImageStore.save(
+                imageAt: artwork.imageURL,
+                artworkID: artwork.id
+            ) {
+                item.localImagePath = path
+            }
+        }
     }
 
     private func animateSaveCup() {
+        // Cancel any in-flight animation from a previous tap so rapid
+        // double-taps don't race against each other.
+        animationTask?.cancel()
+
         // Reset to start position.
         cupOpacity = 0
         cupScale   = 0.75
@@ -139,8 +161,9 @@ struct ArtworkCard: View {
         }
 
         // Phase 2: drift up and fade — slow and unhurried.
-        Task {
+        animationTask = Task {
             try? await Task.sleep(for: .milliseconds(350))
+            guard !Task.isCancelled else { return }
             withAnimation(.easeInOut(duration: 0.65)) {
                 cupOpacity = 0
                 cupScale   = 1.1

@@ -23,15 +23,29 @@ struct FavoriteButton: View {
                 .animation(.easeInOut(duration: 0.2), value: isFavorited)
         }
         .frame(width: 44, height: 44)
-        .padding(.top, 20)
+        .padding(.top, 60)
         .padding(.trailing, 20)
     }
 
     private func toggle() {
         if let existing = matches.first {
+            // Remove local image file before deleting the record.
+            ImageStore.delete(for: existing.artworkID)
             context.delete(existing)
         } else {
-            context.insert(FavoriteItem(from: artwork))
+            let item = FavoriteItem(from: artwork)
+            context.insert(item)
+            // Download and cache the image in the background so the artwork
+            // is fully available offline.  The insert is immediate so the UI
+            // responds instantly; localImagePath is set once the file is ready.
+            Task {
+                if let path = try? await ImageStore.save(
+                    imageAt: artwork.imageURL,
+                    artworkID: artwork.id
+                ) {
+                    item.localImagePath = path
+                }
+            }
         }
     }
 }

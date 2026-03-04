@@ -19,16 +19,19 @@ actor RijksmuseumService {
 
     /// Fetches a random selection of public-domain paintings with images.
     func fetchRandomPaintings(count: Int = 10) async throws -> [Artwork] {
-        let set = paintingSets.randomElement()!
+        guard let set = paintingSets.randomElement() else { return [] }
 
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
+        guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+        else { throw URLError(.badURL) }
+
         components.queryItems = [
             URLQueryItem(name: "verb",           value: "ListRecords"),
             URLQueryItem(name: "metadataPrefix", value: "oai_dc"),
             URLQueryItem(name: "set",            value: set),
         ]
 
-        let (data, _) = try await session.data(from: components.url!)
+        guard let url = components.url else { throw URLError(.badURL) }
+        let (data, _) = try await session.data(from: url)
         let records = OAIParser.parse(data)
 
         return records

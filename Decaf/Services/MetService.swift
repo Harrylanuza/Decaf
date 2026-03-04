@@ -23,6 +23,26 @@ actor MetService {
         let isPublicDomain: Bool
         let repository: String
         let medium: String
+
+        // Use decodeIfPresent for every String/Bool field so that records
+        // with missing keys are recovered with a default rather than thrown away.
+        enum CodingKeys: String, CodingKey {
+            case objectID, title, artistDisplayName, objectDate
+            case primaryImage, primaryImageSmall, isPublicDomain, repository, medium
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            objectID          = try  c.decode(Int.self,    forKey: .objectID)
+            title             = try  c.decodeIfPresent(String.self, forKey: .title)             ?? ""
+            artistDisplayName = try  c.decodeIfPresent(String.self, forKey: .artistDisplayName) ?? ""
+            objectDate        = try  c.decodeIfPresent(String.self, forKey: .objectDate)        ?? ""
+            primaryImage      = try  c.decodeIfPresent(String.self, forKey: .primaryImage)      ?? ""
+            primaryImageSmall = try  c.decodeIfPresent(String.self, forKey: .primaryImageSmall) ?? ""
+            isPublicDomain    = try  c.decodeIfPresent(Bool.self,   forKey: .isPublicDomain)    ?? false
+            repository        = try  c.decodeIfPresent(String.self, forKey: .repository)        ?? ""
+            medium            = try  c.decodeIfPresent(String.self, forKey: .medium)            ?? ""
+        }
     }
 
     // Departments to source from.
@@ -45,16 +65,18 @@ actor MetService {
     /// Returns object IDs from the target departments that have images.
     /// Public-domain filtering is applied per-object in `fetchArtwork`.
     private func fetchCandidateIDs() async throws -> [Int] {
-        var components = URLComponents(
+        guard var components = URLComponents(
             url: baseURL.appendingPathComponent("objects"),
             resolvingAgainstBaseURL: false
-        )!
+        ) else { throw URLError(.badURL) }
+
         components.queryItems = [
             URLQueryItem(name: "departmentIds", value: departmentIDs.map(String.init).joined(separator: "|")),
             URLQueryItem(name: "hasImages",     value: "true"),
         ]
 
-        let (data, _) = try await session.data(from: components.url!)
+        guard let url = components.url else { throw URLError(.badURL) }
+        let (data, _) = try await session.data(from: url)
         let response = try JSONDecoder().decode(SearchResponse.self, from: data)
         return response.objectIDs ?? []
     }

@@ -6,13 +6,17 @@ struct FeedView: View {
     @State private var isFetchingMore = false
     @State private var fetchError: Error?
 
+    @Environment(NetworkMonitor.self) private var network
+
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
 
             if isLoading {
                 BrewingView()
-            } else if let fetchError {
+            } else if !network.isConnected && artworks.isEmpty {
+                offlineEmptyState
+            } else if let fetchError, artworks.isEmpty {
                 errorView(for: fetchError)
             } else {
                 feed
@@ -32,7 +36,8 @@ struct FeedView: View {
                         .onAppear {
                             // Begin fetching the next batch when the user is
                             // three cards from the end — quiet, no interruption.
-                            if index >= artworks.count - 3 {
+                            // max(0, …) guards against underflow when count < 3.
+                            if index >= max(0, artworks.count - 3) {
                                 Task { await fetchMore() }
                             }
                         }
@@ -42,9 +47,8 @@ struct FeedView: View {
                 // while the next batch arrives. Disappears once appended.
                 if isFetchingMore {
                     BrewingView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Theme.background)
                         .containerRelativeFrame([.horizontal, .vertical])
+                        .background(Theme.background)
                 }
             }
             .scrollTargetLayout()
@@ -52,6 +56,44 @@ struct FeedView: View {
         .scrollTargetBehavior(.paging)
         .scrollIndicators(.hidden)
         .ignoresSafeArea(edges: .top)
+        // Gentle offline banner floats above the tab bar while disconnected.
+        .overlay(alignment: .bottom) {
+            if !network.isConnected {
+                offlineBanner
+            }
+        }
+    }
+
+    // Shown when the device is offline and no artworks have been loaded yet.
+    private var offlineEmptyState: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "cup.and.saucer")
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(Theme.muted)
+
+            VStack(spacing: 10) {
+                Text("No connection.")
+                    .font(.system(.callout, design: .serif))
+                    .foregroundStyle(Theme.ink)
+
+                Text("New paintings aren't available offline,\nbut your cup is still full.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
+        }
+        .padding(.horizontal, 48)
+    }
+
+    // A small, unobtrusive strip shown at the bottom of the feed when offline.
+    private var offlineBanner: some View {
+        Text("Offline — new paintings unavailable.")
+            .font(.system(.caption2))
+            .foregroundStyle(Theme.muted)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(Theme.background.opacity(0.95))
     }
 
     private func errorView(for error: Error) -> some View {
@@ -86,32 +128,49 @@ struct FeedView: View {
     private func load() async {
         isLoading = true
         fetchError = nil
-        do {
-            async let metPaintings   = MetService.shared.fetchRandomArtworks(count: 12)
-            async let rijksPaintings = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
-            let (met, rijks) = try await (metPaintings, rijksPaintings)
-            artworks = (met + rijks).shuffled()
-        } catch {
-            fetchError = error
+
+        // Each source is awaited independently so a failure in one does not
+        // prevent the other's artworks from appearing in the feed.
+        async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
+        async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
+        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 8)
+        let met   = (try? await metTask)   ?? []
+        let rijks = (try? await rijksTask) ?? []
+        let aic   = (try? await aicTask)   ?? []
+        let combined = (met + rijks + aic).shuffled()
+
+        if combined.isEmpty {
+            fetchError = URLError(.cannotLoadFromNetwork)
+        } else {
+            artworks = combined
         }
+
         isLoading = false
     }
 
     private func fetchMore() async {
         guard !isFetchingMore else { return }
         isFetchingMore = true
-        do {
-            async let metPaintings   = MetService.shared.fetchRandomArtworks(count: 12)
-            async let rijksPaintings = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
-            let (met, rijks) = try await (metPaintings, rijksPaintings)
-            artworks.append(contentsOf: (met + rijks).shuffled())
-        } catch {
-            // Silently drop incremental failures — the existing feed remains intact.
+
+        async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
+        async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
+        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 8)
+        let met   = (try? await metTask)   ?? []
+        let rijks = (try? await rijksTask) ?? []
+        let aic   = (try? await aicTask)   ?? []
+        let newBatch = (met + rijks + aic).shuffled()
+
+        // Only append when we actually got something; if both failed the
+        // sentinel card simply disappears and the feed ends gracefully.
+        if !newBatch.isEmpty {
+            artworks.append(contentsOf: newBatch)
         }
+
         isFetchingMore = false
     }
 }
 
 #Preview {
     FeedView()
+        .environment(NetworkMonitor())
 }

@@ -10,7 +10,7 @@ struct FavoritesView: View {
             ZStack {
                 Theme.background.ignoresSafeArea()
 
-                if favorites.isEmpty {
+                if validFavorites.isEmpty {
                     emptyState
                 } else {
                     feed
@@ -30,11 +30,17 @@ struct FavoritesView: View {
 
     // MARK: - Subviews
 
+    // Filter out any saved items whose image URL is malformed; showing
+    // them would produce a blank full-screen page in the paged scroll view.
+    private var validFavorites: [FavoriteItem] {
+        favorites.filter { URL(string: $0.imageURLString) != nil }
+    }
+
     private var feed: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
-                ForEach(favorites) { item in
-                    card(for: item)
+                ForEach(validFavorites) { item in
+                    ArtworkCard(artwork: item.asArtwork!)  // nil impossible: filtered above
                         .containerRelativeFrame([.horizontal, .vertical])
                 }
             }
@@ -43,13 +49,6 @@ struct FavoritesView: View {
         .scrollTargetBehavior(.paging)
         .scrollIndicators(.hidden)
         .ignoresSafeArea(edges: .top)
-    }
-
-    @ViewBuilder
-    private func card(for item: FavoriteItem) -> some View {
-        if let artwork = item.asArtwork {
-            ArtworkCard(artwork: artwork)
-        }
     }
 
     private var emptyState: some View {
@@ -63,7 +62,7 @@ struct FavoritesView: View {
                     .font(.system(.callout, design: .serif))
                     .foregroundStyle(Theme.ink)
 
-                Text("Add artworks\nas you browse.")
+                Text("Add artwork as you browse.")
                     .font(.caption)
                     .foregroundStyle(Theme.muted)
                     .multilineTextAlignment(.center)
