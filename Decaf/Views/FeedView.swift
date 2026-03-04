@@ -3,6 +3,7 @@ import SwiftData
 
 struct FeedView: View {
     @State private var artworks: [Artwork] = []
+    @State private var seenIDs: Set<String> = []
     @State private var isLoading = true
     @State private var isFetchingMore = false
     @State private var fetchError: Error?
@@ -122,11 +123,12 @@ struct FeedView: View {
         let aic   = (try? await aicTask)   ?? []
         print("[Feed] load() — Met: \(met.count), Rijksmuseum: \(rijks.count), AIC: \(aic.count)")
         let combined = (met + rijks + aic).shuffled()
+        let fresh = combined.filter { seenIDs.insert($0.id).inserted }
 
-        if combined.isEmpty {
+        if fresh.isEmpty {
             fetchError = URLError(.cannotLoadFromNetwork)
         } else {
-            artworks = combined
+            artworks = fresh
         }
 
         isLoading = false
@@ -144,9 +146,10 @@ struct FeedView: View {
         let aic   = (try? await aicTask)   ?? []
         print("[Feed] fetchMore() — Met: \(met.count), Rijksmuseum: \(rijks.count), AIC: \(aic.count)")
         let newBatch = (met + rijks + aic).shuffled()
+        let fresh = newBatch.filter { seenIDs.insert($0.id).inserted }
 
-        if !newBatch.isEmpty {
-            artworks.append(contentsOf: newBatch)
+        if !fresh.isEmpty {
+            artworks.append(contentsOf: fresh)
         }
 
         isFetchingMore = false
