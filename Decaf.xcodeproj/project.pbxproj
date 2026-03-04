@@ -25,6 +25,7 @@
 		000000000000000000000083 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000055 /* NetworkMonitor.swift */; };
 		000000000000000000000084 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000056 /* ShareButton.swift */; };
 		000000000000000000000085 /* ArtInstituteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000057 /* ArtInstituteService.swift */; };
+		000000000000000000000086 /* ImageDimensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000058 /* ImageDimensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,11 +43,12 @@
 		000000000000000000000047 /* BrewingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewingView.swift; sourceTree = "<group>"; };
 		000000000000000000000051 /* MetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetService.swift; sourceTree = "<group>"; };
 		000000000000000000000053 /* RijksmuseumService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RijksmuseumService.swift; sourceTree = "<group>"; };
-		000000000000000000000080 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		000000000000000000000054 /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		000000000000000000000055 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		000000000000000000000056 /* ShareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareButton.swift; sourceTree = "<group>"; };
 		000000000000000000000057 /* ArtInstituteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtInstituteService.swift; sourceTree = "<group>"; };
+		000000000000000000000058 /* ImageDimensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDimensions.swift; sourceTree = "<group>"; };
+		000000000000000000000080 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000057 /* ArtInstituteService.swift */,
+				000000000000000000000058 /* ImageDimensions.swift */,
 				000000000000000000000054 /* ImageStore.swift */,
 				000000000000000000000051 /* MetService.swift */,
 				000000000000000000000055 /* NetworkMonitor.swift */,
@@ -211,6 +214,7 @@
 				000000000000000000000083 /* NetworkMonitor.swift in Sources */,
 				000000000000000000000084 /* ShareButton.swift in Sources */,
 				000000000000000000000085 /* ArtInstituteService.swift in Sources */,
+				000000000000000000000086 /* ImageDimensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +362,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.decaf.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.harrylanuza.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -384,7 +388,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.decaf.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.harrylanuza.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

@@ -45,6 +45,8 @@ actor ArtInstituteService {
     // MARK: - Public API
 
     /// Fetches a random selection of public-domain paintings from the AIC collection.
+    /// No dimension filter is applied — AIC's collection skews portrait, which
+    /// displays well in a portrait card without any special handling.
     func fetchRandomPaintings(count: Int = 10) async throws -> [Artwork] {
         // Probe on first call to learn how many paintings exist, then cache the
         // count so every subsequent call only needs a single network request.

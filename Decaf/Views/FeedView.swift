@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct FeedView: View {
     @State private var artworks: [Artwork] = []
@@ -7,6 +8,7 @@ struct FeedView: View {
     @State private var fetchError: Error?
 
     @Environment(NetworkMonitor.self) private var network
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         ZStack {
@@ -28,43 +30,27 @@ struct FeedView: View {
     // MARK: - Subviews
 
     private var feed: some View {
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 0) {
-                ForEach(Array(artworks.enumerated()), id: \.element.id) { index, artwork in
-                    ArtworkCard(artwork: artwork)
-                        .containerRelativeFrame([.horizontal, .vertical])
-                        .onAppear {
-                            // Begin fetching the next batch when the user is
-                            // three cards from the end — quiet, no interruption.
-                            // max(0, …) guards against underflow when count < 3.
-                            if index >= max(0, artworks.count - 3) {
-                                Task { await fetchMore() }
-                            }
-                        }
-                }
-
-                // Sentinel card: holds the user's place in the paged scroll
-                // while the next batch arrives. Disappears once appended.
-                if isFetchingMore {
-                    BrewingView()
-                        .containerRelativeFrame([.horizontal, .vertical])
-                        .background(Theme.background)
-                }
-            }
-            .scrollTargetLayout()
-        }
-        .scrollTargetBehavior(.paging)
-        .scrollIndicators(.hidden)
+        VerticalPageFeed(
+            artworks: artworks,
+            modelContainer: modelContext.container,
+            onNearEnd: { Task { await fetchMore() } }
+        )
         .ignoresSafeArea(edges: .top)
-        // Gentle offline banner floats above the tab bar while disconnected.
         .overlay(alignment: .bottom) {
-            if !network.isConnected {
-                offlineBanner
+            VStack(spacing: 0) {
+                if isFetchingMore {
+                    Image(systemName: "cup.and.saucer")
+                        .font(.system(size: 14, weight: .ultraLight))
+                        .foregroundStyle(Theme.muted.opacity(0.5))
+                        .padding(.bottom, 12)
+                }
+                if !network.isConnected {
+                    offlineBanner
+                }
             }
         }
     }
 
-    // Shown when the device is offline and no artworks have been loaded yet.
     private var offlineEmptyState: some View {
         VStack(spacing: 24) {
             Image(systemName: "cup.and.saucer")
@@ -86,7 +72,6 @@ struct FeedView: View {
         .padding(.horizontal, 48)
     }
 
-    // A small, unobtrusive strip shown at the bottom of the feed when offline.
     private var offlineBanner: some View {
         Text("Offline — new paintings unavailable.")
             .font(.system(.caption2))
@@ -129,14 +114,13 @@ struct FeedView: View {
         isLoading = true
         fetchError = nil
 
-        // Each source is awaited independently so a failure in one does not
-        // prevent the other's artworks from appearing in the feed.
         async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
         async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
-        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 8)
+        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
+        print("[Feed] load() — Met: \(met.count), Rijksmuseum: \(rijks.count), AIC: \(aic.count)")
         let combined = (met + rijks + aic).shuffled()
 
         if combined.isEmpty {
@@ -154,19 +138,134 @@ struct FeedView: View {
 
         async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
         async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
-        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 8)
+        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
+        print("[Feed] fetchMore() — Met: \(met.count), Rijksmuseum: \(rijks.count), AIC: \(aic.count)")
         let newBatch = (met + rijks + aic).shuffled()
 
-        // Only append when we actually got something; if both failed the
-        // sentinel card simply disappears and the feed ends gracefully.
         if !newBatch.isEmpty {
             artworks.append(contentsOf: newBatch)
         }
 
         isFetchingMore = false
+    }
+}
+
+// MARK: - VerticalPageFeed
+
+/// UIPageViewController with .scroll transition and .vertical navigation orientation.
+/// UIKit owns all layout and paging — there is no SwiftUI scroll view, no
+/// GeometryReader, no .scrollTargetBehavior, and no UIAppearance involvement.
+/// Each page is one UIHostingController whose root view is an ArtworkCard.
+private struct VerticalPageFeed: UIViewControllerRepresentable {
+    let artworks: [Artwork]
+    let modelContainer: ModelContainer
+    let onNearEnd: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(artworks: artworks, modelContainer: modelContainer, onNearEnd: onNearEnd)
+    }
+
+    func makeUIViewController(context: Context) -> UIPageViewController {
+        let pvc = UIPageViewController(
+            transitionStyle: .scroll,
+            navigationOrientation: .vertical
+        )
+        pvc.view.backgroundColor = .clear
+        pvc.dataSource = context.coordinator
+        pvc.delegate   = context.coordinator
+
+        // Set the first page. artworks is guaranteed non-empty here because
+        // FeedView only shows this view in its non-empty else branch.
+        pvc.setViewControllers(
+            [context.coordinator.makePage(at: 0)],
+            direction: .forward,
+            animated: false
+        )
+
+        return pvc
+    }
+
+    func updateUIViewController(_ pvc: UIPageViewController, context: Context) {
+        let previousCount = context.coordinator.artworks.count
+
+        // Update the coordinator before anything else so data-source callbacks
+        // that fire during setViewControllers see the fresh array.
+        context.coordinator.artworks  = artworks
+        context.coordinator.onNearEnd = onNearEnd
+
+        // When a fetchMore batch arrives, UIPageViewController still holds a
+        // stale nil in its adjacent-page cache from the last call to
+        // viewControllerAfter that returned nil (the old end of the list).
+        // UIKit never re-queries the data source on its own, so the user hits
+        // a permanent hard stop even though new pages now exist.
+        //
+        // Re-presenting the current page without animation flushes that cache,
+        // causing UIKit to immediately re-call viewControllerAfter with the
+        // current index and get a valid page back.
+        if artworks.count > previousCount,
+           let currentVC = pvc.viewControllers?.first {
+            pvc.setViewControllers([currentVC], direction: .forward, animated: false)
+        }
+    }
+
+    // MARK: Coordinator
+
+    final class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+        var artworks: [Artwork]
+        let modelContainer: ModelContainer
+        var onNearEnd: () -> Void
+
+        init(artworks: [Artwork], modelContainer: ModelContainer, onNearEnd: @escaping () -> Void) {
+            self.artworks       = artworks
+            self.modelContainer = modelContainer
+            self.onNearEnd      = onNearEnd
+        }
+
+        /// Builds a hosting controller for the artwork at the given index.
+        /// The view.tag stores the index so data-source callbacks can identify pages.
+        func makePage(at index: Int) -> UIViewController {
+            let vc = UIHostingController(
+                rootView: ArtworkCard(artwork: artworks[index])
+                    .modelContainer(modelContainer)
+                    .ignoresSafeArea()
+            )
+            vc.view.tag             = index
+            vc.view.backgroundColor = .clear
+            return vc
+        }
+
+        // MARK: UIPageViewControllerDataSource
+
+        func pageViewController(
+            _ pvc: UIPageViewController,
+            viewControllerBefore vc: UIViewController
+        ) -> UIViewController? {
+            let index = vc.view.tag
+            guard index > 0 else { return nil }
+            return makePage(at: index - 1)
+        }
+
+        func pageViewController(
+            _ pvc: UIPageViewController,
+            viewControllerAfter vc: UIViewController
+        ) -> UIViewController? {
+            let index = vc.view.tag
+
+            // Fire before the bounds check so onNearEnd() is called even when
+            // the user is already on the last page. Without this ordering,
+            // the guard would return nil first and the fetch would never start.
+            // Trigger 5 pages from the end (not 3) to give the network request
+            // enough lead time to complete before the user reaches the boundary.
+            if index >= artworks.count - 5 {
+                onNearEnd()
+            }
+
+            guard index < artworks.count - 1 else { return nil }
+            return makePage(at: index + 1)
+        }
     }
 }
 

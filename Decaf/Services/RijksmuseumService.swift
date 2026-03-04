@@ -17,7 +17,9 @@ actor RijksmuseumService {
 
     // MARK: - Public API
 
-    /// Fetches a random selection of public-domain paintings with images.
+    /// Fetches a random selection of public-domain paintings with images,
+    /// silently omitting any whose dimensions are too extreme to display well
+    /// in a full-screen portrait card (panoramics, narrow columns, tiny images).
     func fetchRandomPaintings(count: Int = 10) async throws -> [Artwork] {
         guard let set = paintingSets.randomElement() else { return [] }
 
@@ -34,21 +36,40 @@ actor RijksmuseumService {
         let (data, _) = try await session.data(from: url)
         let records = OAIParser.parse(data)
 
-        return records
+        // Pull more candidates than needed so filtering still yields enough.
+        let candidates = records
             .filter { $0.hasImage && $0.isPublicDomain }
             .shuffled()
-            .prefix(count)
-            .compactMap { record -> Artwork? in
-                guard let imageURL = record.imageURL else { return nil }
-                return Artwork(
-                    id: record.catalogNumber.isEmpty ? record.lodIdentifier : record.catalogNumber,
-                    imageURL: imageURL,
-                    title: record.title.isEmpty ? "Untitled" : record.title,
-                    artistName: record.creator.isEmpty ? "Unknown Artist" : record.creator,
-                    date: record.date,
-                    credit: "Rijksmuseum, Amsterdam"
-                )
+            .prefix(count * 4)
+
+        return await withTaskGroup(of: Artwork?.self) { group in
+            for record in candidates {
+                group.addTask {
+                    guard let imageURL = record.imageURL else { return nil }
+                    // Lightweight IIIF info.json probe — no image download.
+                    guard let dims = await iiifImageDimensions(imageURL: imageURL),
+                          dims.isSuitable else { return nil }
+                    return Artwork(
+                        id: record.catalogNumber.isEmpty ? record.lodIdentifier : record.catalogNumber,
+                        imageURL: imageURL,
+                        title: record.title.isEmpty ? "Untitled" : record.title,
+                        artistName: record.creator.isEmpty ? "Unknown Artist" : record.creator,
+                        date: record.date,
+                        credit: "Rijksmuseum, Amsterdam"
+                    )
+                }
             }
+
+            var results: [Artwork] = []
+            for await artwork in group {
+                if let artwork { results.append(artwork) }
+                if results.count >= count {
+                    group.cancelAll()
+                    break
+                }
+            }
+            return Array(results.prefix(count))
+        }
     }
 }
 

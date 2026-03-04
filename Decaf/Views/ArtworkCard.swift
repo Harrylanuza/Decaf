@@ -3,8 +3,6 @@ import SwiftData
 
 struct ArtworkCard: View {
     let artwork: Artwork
-    @State private var titleExpanded = false
-
     // Double-tap save confirmation state
     @State private var cupOpacity: Double = 0
     @State private var cupScale: CGFloat = 0.75
@@ -21,12 +19,19 @@ struct ArtworkCard: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            image
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            caption
+        // GeometryReader at the card root locks the total card dimensions so
+        // neither image-loading phase transitions nor variable-length text can
+        // ever alter the card's layout footprint in the scroll view.
+        GeometryReader { geo in
+            VStack(spacing: 0) {
+                image
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                caption
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+            .background(Theme.background)
+            .clipped()
         }
-        .background(Theme.background)
         // Single overlay spanning the full card width keeps both buttons in the
         // same render pass, avoiding z-order ambiguity between separate overlays.
         .overlay(alignment: .top) {
@@ -41,6 +46,10 @@ struct ArtworkCard: View {
     // MARK: - Subviews
 
     private var image: some View {
+        // GeometryReader at the card root (in body) already locks the total card
+        // height, so every AsyncImage phase just needs to fill the available space.
+        // scaledToFit centres the painting at its natural aspect ratio within the
+        // fixed frame, with linen showing in the remaining space — like a wall mount.
         AsyncImage(url: artwork.imageURL) { phase in
             switch phase {
             case .empty:
@@ -51,6 +60,7 @@ struct ArtworkCard: View {
                 image
                     .resizable()
                     .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     // Gentle shadow lifts the painting off the linen ground.
                     .shadow(color: Theme.ink.opacity(0.10), radius: 18, x: 0, y: 6)
                     .transition(.opacity.animation(.easeInOut(duration: 0.5)))
@@ -91,30 +101,33 @@ struct ArtworkCard: View {
                 .padding(.horizontal, 28)
 
             VStack(alignment: .leading, spacing: 5) {
+                // All text is strictly single-line so the caption block has a
+                // fixed height and can never push against the GeometryReader frame.
                 Text(artwork.title)
                     .font(.system(.callout, design: .serif))
                     .foregroundStyle(Theme.ink)
-                    .lineLimit(titleExpanded ? nil : 1)
+                    .lineLimit(1)
                     .truncationMode(.tail)
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            titleExpanded.toggle()
-                        }
-                    }
 
                 Text(artwork.artistName)
                     .font(.system(.footnote, design: .serif))
                     .foregroundStyle(Theme.body)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 if !artwork.date.isEmpty {
                     Text(artwork.date)
                         .font(.system(.caption2))
                         .foregroundStyle(Theme.muted)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
 
                 Text(artwork.credit)
                     .font(.system(.caption2).italic())
                     .foregroundStyle(Theme.muted.opacity(0.75))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .padding(.top, 6)
             }
             .padding(.horizontal, 28)

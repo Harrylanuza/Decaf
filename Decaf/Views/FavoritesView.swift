@@ -30,25 +30,22 @@ struct FavoritesView: View {
 
     // MARK: - Subviews
 
-    // Filter out any saved items whose image URL is malformed; showing
-    // them would produce a blank full-screen page in the paged scroll view.
     private var validFavorites: [FavoriteItem] {
         favorites.filter { URL(string: $0.imageURLString) != nil }
     }
 
     private var feed: some View {
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 0) {
-                ForEach(validFavorites) { item in
-                    ArtworkCard(artwork: item.asArtwork!)  // nil impossible: filtered above
-                        .containerRelativeFrame([.horizontal, .vertical])
+        GeometryReader { proxy in
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 0) {
+                    ForEach(validFavorites) { item in
+                        ArtworkCard(artwork: item.asArtwork!)
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                    }
                 }
             }
-            .scrollTargetLayout()
+            .scrollTargetBehavior(.paging)
         }
-        .scrollTargetBehavior(.paging)
-        .scrollIndicators(.hidden)
-        .ignoresSafeArea(edges: .top)
     }
 
     private var emptyState: some View {
