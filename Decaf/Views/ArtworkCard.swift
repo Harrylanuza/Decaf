@@ -24,7 +24,7 @@ struct ArtworkCard: View {
         // ever alter the card's layout footprint in the scroll view.
         GeometryReader { geo in
             VStack(spacing: 0) {
-                image
+                image(topInset: geo.safeAreaInsets.top)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 caption
             }
@@ -45,50 +45,62 @@ struct ArtworkCard: View {
 
     // MARK: - Subviews
 
-    private var image: some View {
-        // GeometryReader at the card root (in body) already locks the total card
-        // height, so every AsyncImage phase just needs to fill the available space.
-        // scaledToFit centres the painting at its natural aspect ratio within the
-        // fixed frame, with linen showing in the remaining space — like a wall mount.
-        AsyncImage(url: artwork.imageURL) { phase in
-            switch phase {
-            case .empty:
-                BrewingView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .transition(.opacity)
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    // Gentle shadow lifts the painting off the linen ground.
-                    .shadow(color: Theme.ink.opacity(0.10), radius: 18, x: 0, y: 6)
-                    .transition(.opacity.animation(.easeInOut(duration: 0.5)))
-            case .failure:
-                Image(systemName: "photo")
-                    .font(.system(size: 40))
-                    .foregroundStyle(Theme.muted)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            @unknown default:
-                Color.clear
+    private func image(topInset: CGFloat) -> some View {
+        // GeometryReader measures the exact slot so scaledToFit() receives finite
+        // bounds in both axes. Without explicit maxHeight, AsyncImage may propose
+        // unbounded height, causing tall narrow paintings to exceed the slot and clip.
+        GeometryReader { slot in
+            // Guarantee at least 60 pt of clearance from the top of the screen so
+            // no painting ever overlaps the Dynamic Island or status bar. The
+            // AsyncImage container is framed to the usable region (below the top
+            // inset, above 20 pt bottom padding) and then offset down into place,
+            // so scaledToFit() centres the painting within that safe zone.
+            let topPad = max(topInset, 60)
+            let usableHeight = slot.size.height - topPad - 20
+            let maxW = slot.size.width - 56   // 28 pt per side
+
+            AsyncImage(url: artwork.imageURL) { phase in
+                switch phase {
+                case .empty:
+                    BrewingView()
+                        .frame(maxWidth: maxW, maxHeight: usableHeight)
+                        .transition(.opacity)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        // Explicit finite bounds prevent tall paintings from overflowing.
+                        .frame(maxWidth: maxW, maxHeight: usableHeight)
+                        // Gentle shadow lifts the painting off the linen ground.
+                        .shadow(color: Theme.ink.opacity(0.10), radius: 18, x: 0, y: 6)
+                        .transition(.opacity.animation(.easeInOut(duration: 0.5)))
+                case .failure:
+                    Image(systemName: "photo")
+                        .font(.system(size: 40))
+                        .foregroundStyle(Theme.muted)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                @unknown default:
+                    Color.clear
+                }
             }
-        }
-        .padding(.horizontal, 28)
-        .padding(.vertical, 24)
-        // Make the full padded area respond to gestures, not just the image pixels.
-        .contentShape(Rectangle())
-        .onTapGesture(count: 2) {
-            performDoubleTap()
-        }
-        .overlay {
-            // Double-tap save confirmation: cup rises and fades.
-            Image(systemName: "cup.and.saucer")
-                .font(.system(size: 52, weight: .ultraLight))
-                .foregroundStyle(Theme.ink)
-                .opacity(cupOpacity)
-                .scaleEffect(cupScale)
-                .offset(y: cupOffset)
-                .allowsHitTesting(false)
+            // Frame to the usable region and shift it below the status bar.
+            .frame(width: slot.size.width, height: usableHeight)
+            .offset(y: topPad)
+            // Make the full usable area respond to gestures, not just image pixels.
+            .contentShape(Rectangle())
+            .onTapGesture(count: 2) {
+                performDoubleTap()
+            }
+            .overlay {
+                // Double-tap save confirmation: cup rises and fades.
+                Image(systemName: "cup.and.saucer")
+                    .font(.system(size: 52, weight: .ultraLight))
+                    .foregroundStyle(Theme.ink)
+                    .opacity(cupOpacity)
+                    .scaleEffect(cupScale)
+                    .offset(y: cupOffset)
+                    .allowsHitTesting(false)
+            }
         }
     }
 

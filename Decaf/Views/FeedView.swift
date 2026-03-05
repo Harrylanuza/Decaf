@@ -16,7 +16,7 @@ struct FeedView: View {
             Theme.background.ignoresSafeArea()
 
             if isLoading {
-                BrewingView()
+                loadingCard
             } else if !network.isConnected && artworks.isEmpty {
                 offlineEmptyState
             } else if let fetchError, artworks.isEmpty {
@@ -50,6 +50,46 @@ struct FeedView: View {
                 }
             }
         }
+    }
+
+    /// Structural skeleton that mirrors ArtworkCard's layout so BrewingView
+    /// occupies the identical frame during the API-fetch loading phase as it does
+    /// during ArtworkCard's image-download phase. Uses the same GeometryReader,
+    /// ignoresSafeArea, caption fonts, and padding as ArtworkCard so there is
+    /// zero positional jump when the feed transitions in.
+    private var loadingCard: some View {
+        GeometryReader { geo in
+            VStack(spacing: 0) {
+                BrewingView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 24)
+
+                // Caption block — same structure as ArtworkCard.caption.
+                // Single-space Text views preserve the correct line height for
+                // each style without displaying visible content.
+                VStack(alignment: .leading, spacing: 0) {
+                    Theme.hairline
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 0.5)
+                        .padding(.horizontal, 28)
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(verbatim: " ").font(.system(.callout,  design: .serif))
+                        Text(verbatim: " ").font(.system(.footnote, design: .serif))
+                        Text(verbatim: " ").font(.system(.caption2))
+                        Text(verbatim: " ").font(.system(.caption2).italic()).padding(.top, 6)
+                    }
+                    .padding(.horizontal, 28)
+                    .padding(.top, 14)
+                    .padding(.bottom, 24)
+                }
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+            .background(Theme.background)
+            .clipped()
+        }
+        .ignoresSafeArea(edges: .top)
     }
 
     private var offlineEmptyState: some View {
