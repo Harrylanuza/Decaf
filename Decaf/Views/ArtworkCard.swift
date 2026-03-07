@@ -26,20 +26,23 @@ struct ArtworkCard: View {
             VStack(spacing: 0) {
                 image(topInset: geo.safeAreaInsets.top)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // Overlay anchored to the bottom of the image slot places the
+                    // buttons just above the hairline that divides image from caption.
+                    // No safe-area arithmetic needed — the image slot boundary is the
+                    // natural anchor, and the caption below is a separate view.
+                    .overlay(alignment: .bottom) {
+                        HStack(spacing: 0) {
+                            ShareButton(artwork: artwork)
+                            Spacer()
+                            FavoriteButton(artwork: artwork)
+                        }
+                        .padding(.bottom, 8)
+                    }
                 caption
             }
             .frame(width: geo.size.width, height: geo.size.height)
             .background(Theme.background)
             .clipped()
-        }
-        // Single overlay spanning the full card width keeps both buttons in the
-        // same render pass, avoiding z-order ambiguity between separate overlays.
-        .overlay(alignment: .top) {
-            HStack(alignment: .top, spacing: 0) {
-                ShareButton(artwork: artwork)
-                Spacer()
-                FavoriteButton(artwork: artwork)
-            }
         }
     }
 

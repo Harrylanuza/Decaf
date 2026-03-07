@@ -19,10 +19,8 @@ struct ShareButton: View {
                 .animation(.easeInOut(duration: 0.15), value: isFetching)
         }
         // 44 × 44 touch target — same as FavoriteButton.
-        // 60 pt top pad clears the status bar; 20 pt leading mirrors the
-        // cup button's 20 pt trailing pad, producing a symmetrical layout.
+        // 20 pt leading mirrors the cup button's 20 pt trailing pad.
         .frame(width: 44, height: 44)
-        .padding(.top, 60)
         .padding(.leading, 20)
         .sheet(isPresented: $isPresenting) {
             ShareSheet(items: shareItems)

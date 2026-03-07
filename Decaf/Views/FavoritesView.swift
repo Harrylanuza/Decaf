@@ -5,25 +5,21 @@ struct FavoritesView: View {
     @Query(sort: \FavoriteItem.savedAt, order: .reverse)
     private var favorites: [FavoriteItem]
 
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.background.ignoresSafeArea()
+    @State private var selectedItem: FavoriteItem?
 
-                if validFavorites.isEmpty {
-                    emptyState
-                } else {
-                    feed
-                }
+    var body: some View {
+        ZStack {
+            Theme.background.ignoresSafeArea()
+
+            if validFavorites.isEmpty {
+                emptyState
+            } else {
+                grid
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Theme.background, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Your Cup")
-                        .font(.system(.subheadline, design: .serif))
-                        .foregroundStyle(Theme.body)
-                }
+        }
+        .fullScreenCover(item: $selectedItem) { item in
+            if let artwork = item.asArtwork {
+                CupDetailView(artwork: artwork)
             }
         }
     }
@@ -34,17 +30,22 @@ struct FavoritesView: View {
         favorites.filter { URL(string: $0.imageURLString) != nil }
     }
 
-    private var feed: some View {
-        GeometryReader { proxy in
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0) {
-                    ForEach(validFavorites) { item in
-                        ArtworkCard(artwork: item.asArtwork!)
-                            .frame(width: proxy.size.width, height: proxy.size.height)
-                    }
+    private var grid: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 3),
+                    GridItem(.flexible(), spacing: 3),
+                ],
+                spacing: 3
+            ) {
+                ForEach(validFavorites) { item in
+                    ThumbnailCell(item: item)
+                        .aspectRatio(1, contentMode: .fit)
+                        .contentShape(Rectangle())
+                        .onTapGesture { selectedItem = item }
                 }
             }
-            .scrollTargetBehavior(.paging)
         }
     }
 
@@ -65,5 +66,73 @@ struct FavoritesView: View {
                     .multilineTextAlignment(.center)
             }
         }
+    }
+}
+
+// MARK: - Thumbnail cell
+
+private struct ThumbnailCell: View {
+    let item: FavoriteItem
+
+    var body: some View {
+        // Color.clear establishes the proposed square frame; AsyncImage overlays
+        // and fills it with scaledToFill. clipped() crops any overflow.
+        Color.clear
+            .overlay {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .success(let img):
+                        img.resizable().scaledToFill()
+                    case .empty:
+                        Theme.muted.opacity(0.08)
+                    case .failure:
+                        Theme.muted.opacity(0.15)
+                    @unknown default:
+                        Color.clear
+                    }
+                }
+            }
+            .clipped()
+    }
+
+    private var imageURL: URL? {
+        if let path = item.localImagePath, let local = ImageStore.fileURL(for: path) {
+            return local
+        }
+        return URL(string: item.imageURLString)
+    }
+}
+
+// MARK: - Full-screen detail
+
+private struct CupDetailView: View {
+    let artwork: Artwork
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        // ignoresSafeArea() is applied directly to ArtworkCard — the same way
+        // VerticalPageFeed does it via UIHostingController. This lets the card's
+        // own internal safe-area accounting work correctly; wrapping it in an
+        // outer GeometryReader causes the card to double-count the top inset,
+        // pushing the painting too far down.
+        ArtworkCard(artwork: artwork)
+            .ignoresSafeArea()
+            .overlay(alignment: .topLeading) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(Theme.muted)
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                // Sit just below the Dynamic Island / status bar.
+                .padding(.top, 60)
+                .padding(.leading, 12)
+            }
+            // Swipe down to dismiss — intuitive complement to the close button.
+            .gesture(DragGesture().onEnded { value in
+                if value.translation.height > 80 { dismiss() }
+            })
     }
 }

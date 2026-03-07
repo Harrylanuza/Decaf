@@ -23,7 +23,6 @@ struct FavoriteButton: View {
                 .animation(.easeInOut(duration: 0.2), value: isFavorited)
         }
         .frame(width: 44, height: 44)
-        .padding(.top, 60)
         .padding(.trailing, 20)
     }
 
