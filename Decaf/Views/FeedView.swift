@@ -248,9 +248,10 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ pvc: UIPageViewController, context: Context) {
-        let coordinator    = context.coordinator
-        let previousCount  = coordinator.artworks.count
-        let savedIndex     = coordinator.currentIndex
+        let coordinator      = context.coordinator
+        let previousArtworks = coordinator.artworks
+        let previousCount    = previousArtworks.count
+        let savedIndex       = coordinator.currentIndex
 
         // Update the coordinator before anything else so data-source callbacks
         // that fire during setViewControllers see the fresh array.
@@ -270,11 +271,21 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
             pvc.setViewControllers([vc], direction: .forward, animated: false)
 
         } else if artworks.count < previousCount {
-            // An artwork was removed (its image failed). Navigate to the same
-            // index — which now points to the next artwork — or the last page
-            // if the failed card was at the end of the list.
+            // An artwork was removed (its image failed). Find the index of the
+            // removed artwork by scanning for the first position where old and
+            // new arrays diverge. If the removal fell before the current page,
+            // every subsequent index shifts left by one — compensate so the user
+            // stays on the same painting rather than jumping forward one.
             guard !artworks.isEmpty else { return }
-            let targetIndex = min(savedIndex, artworks.count - 1)
+            var removedIndex = previousCount - 1
+            for i in artworks.indices {
+                if artworks[i].id != previousArtworks[i].id {
+                    removedIndex = i
+                    break
+                }
+            }
+            let adjustedIndex = removedIndex < savedIndex ? savedIndex - 1 : savedIndex
+            let targetIndex = min(adjustedIndex, artworks.count - 1)
             coordinator.currentIndex = targetIndex
             pvc.setViewControllers(
                 [coordinator.makePage(at: targetIndex)],
