@@ -282,16 +282,6 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
                 animated: false
             )
 
-        } else if pvc.viewControllers?.first?.view.tag != savedIndex {
-            // Count is unchanged but the displayed page doesn't match the
-            // last-known index. This happens when UIPageViewController loses
-            // its page after a tab-switch visibility change. Restore silently.
-            guard savedIndex < artworks.count else { return }
-            pvc.setViewControllers(
-                [coordinator.makePage(at: savedIndex)],
-                direction: .forward,
-                animated: false
-            )
         }
     }
 
