@@ -3,6 +3,9 @@ import SwiftData
 
 struct ArtworkCard: View {
     let artwork: Artwork
+    /// Called once when the artwork's image fails to load. The feed uses this
+    /// to silently remove the card so the user never sees a broken placeholder.
+    var onImageFailure: (() -> Void)? = nil
     // Double-tap save confirmation state
     @State private var cupOpacity: Double = 0
     @State private var cupScale: CGFloat = 0.75
@@ -78,10 +81,11 @@ struct ArtworkCard: View {
                         .shadow(color: Theme.ink.opacity(0.10), radius: 18, x: 0, y: 6)
                         .transition(.opacity.animation(.easeInOut(duration: 0.5)))
                 case .failure:
-                    Image(systemName: "photo")
-                        .font(.system(size: 40))
-                        .foregroundStyle(Theme.muted)
+                    // Transparent placeholder — onAppear fires the removal
+                    // callback so the feed can drop this card silently.
+                    Color.clear
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .onAppear { onImageFailure?() }
                 @unknown default:
                     Color.clear
                 }

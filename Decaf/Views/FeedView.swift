@@ -34,7 +34,13 @@ struct FeedView: View {
         VerticalPageFeed(
             artworks: artworks,
             modelContainer: modelContext.container,
-            onNearEnd: { Task { await fetchMore() } }
+            onNearEnd: { Task { await fetchMore() } },
+            onImageFailure: { id in
+                // Remove the artwork whose image failed and mark it seen so
+                // it is never re-fetched; the user never sees the broken card.
+                artworks.removeAll { $0.id == id }
+                seenIDs.insert(id)
+            }
         )
         .ignoresSafeArea(edges: .top)
         .overlay(alignment: .bottom) {
@@ -206,9 +212,15 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
     let artworks: [Artwork]
     let modelContainer: ModelContainer
     let onNearEnd: () -> Void
+    let onImageFailure: (String) -> Void
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(artworks: artworks, modelContainer: modelContainer, onNearEnd: onNearEnd)
+        Coordinator(
+            artworks: artworks,
+            modelContainer: modelContainer,
+            onNearEnd: onNearEnd,
+            onImageFailure: onImageFailure
+        )
     }
 
     func makeUIViewController(context: Context) -> UIPageViewController {
@@ -236,21 +248,30 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
 
         // Update the coordinator before anything else so data-source callbacks
         // that fire during setViewControllers see the fresh array.
-        context.coordinator.artworks  = artworks
-        context.coordinator.onNearEnd = onNearEnd
+        context.coordinator.artworks       = artworks
+        context.coordinator.onNearEnd      = onNearEnd
+        context.coordinator.onImageFailure = onImageFailure
 
-        // When a fetchMore batch arrives, UIPageViewController still holds a
-        // stale nil in its adjacent-page cache from the last call to
-        // viewControllerAfter that returned nil (the old end of the list).
-        // UIKit never re-queries the data source on its own, so the user hits
-        // a permanent hard stop even though new pages now exist.
-        //
-        // Re-presenting the current page without animation flushes that cache,
-        // causing UIKit to immediately re-call viewControllerAfter with the
-        // current index and get a valid page back.
-        if artworks.count > previousCount,
-           let currentVC = pvc.viewControllers?.first {
+        guard artworks.count != previousCount,
+              let currentVC = pvc.viewControllers?.first else { return }
+
+        if artworks.count > previousCount {
+            // When a fetchMore batch arrives, UIPageViewController still holds a
+            // stale nil in its adjacent-page cache from the last call to
+            // viewControllerAfter that returned nil (the old end of the list).
+            // Re-presenting the current page flushes that cache.
             pvc.setViewControllers([currentVC], direction: .forward, animated: false)
+        } else {
+            // An artwork was removed (its image failed). Navigate to the same
+            // index — which now points to the next artwork — or the last page
+            // if the failed card was at the end of the list.
+            guard !artworks.isEmpty else { return }
+            let targetIndex = min(currentVC.view.tag, artworks.count - 1)
+            pvc.setViewControllers(
+                [context.coordinator.makePage(at: targetIndex)],
+                direction: .forward,
+                animated: false
+            )
         }
     }
 
@@ -260,18 +281,28 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
         var artworks: [Artwork]
         let modelContainer: ModelContainer
         var onNearEnd: () -> Void
+        var onImageFailure: (String) -> Void
 
-        init(artworks: [Artwork], modelContainer: ModelContainer, onNearEnd: @escaping () -> Void) {
+        init(
+            artworks: [Artwork],
+            modelContainer: ModelContainer,
+            onNearEnd: @escaping () -> Void,
+            onImageFailure: @escaping (String) -> Void
+        ) {
             self.artworks       = artworks
             self.modelContainer = modelContainer
             self.onNearEnd      = onNearEnd
+            self.onImageFailure = onImageFailure
         }
 
         /// Builds a hosting controller for the artwork at the given index.
         /// The view.tag stores the index so data-source callbacks can identify pages.
         func makePage(at index: Int) -> UIViewController {
+            let artwork = artworks[index]
+            var card = ArtworkCard(artwork: artwork)
+            card.onImageFailure = { [weak self] in self?.onImageFailure(artwork.id) }
             let vc = UIHostingController(
-                rootView: ArtworkCard(artwork: artworks[index])
+                rootView: card
                     .modelContainer(modelContainer)
                     .ignoresSafeArea()
             )
