@@ -108,7 +108,7 @@ actor ArtInstituteService {
         return Artwork(
             id:         "aic-\(obj.id)",
             imageURL:   imageURL,
-            title:      (obj.title ?? "").isEmpty ? "Untitled" : obj.title!,
+            title:      (obj.title ?? "").isEmpty ? "Untitled" : obj.title ?? "Untitled",
             artistName: artist.isEmpty ? "Unknown Artist" : artist,
             date:       obj.dateDisplay ?? "",
             credit:     "Art Institute of Chicago"
