@@ -27,11 +27,19 @@ struct ContentView: View {
 
     // MARK: - Content
 
-    @ViewBuilder
     private var content: some View {
-        switch selectedTab {
-        case .discover: FeedView()
-        case .cup:      FavoritesView()
+        // ZStack keeps both views alive so UIPageViewController retains its
+        // current page across tab switches. A @ViewBuilder switch destroys
+        // FeedView on every tab change, resetting the scroll position and
+        // triggering a reload. opacity + allowsHitTesting gives a clean
+        // show/hide without any SwiftUI appear/disappear lifecycle events.
+        ZStack {
+            FeedView()
+                .opacity(selectedTab == .discover ? 1 : 0)
+                .allowsHitTesting(selectedTab == .discover)
+            FavoritesView()
+                .opacity(selectedTab == .cup ? 1 : 0)
+                .allowsHitTesting(selectedTab == .cup)
         }
     }
 

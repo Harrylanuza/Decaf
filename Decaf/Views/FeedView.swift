@@ -158,6 +158,10 @@ struct FeedView: View {
     // MARK: - Data
 
     private func load() async {
+        // Skip if artworks are already loaded. With the ZStack-based tab layout
+        // in ContentView, FeedView is never recreated on tab switches, so this
+        // guard is mainly a safety net against unexpected task re-fires.
+        guard artworks.isEmpty else { return }
         isLoading = true
         fetchError = nil
 
@@ -244,31 +248,47 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ pvc: UIPageViewController, context: Context) {
-        let previousCount = context.coordinator.artworks.count
+        let coordinator    = context.coordinator
+        let previousCount  = coordinator.artworks.count
+        let savedIndex     = coordinator.currentIndex
 
         // Update the coordinator before anything else so data-source callbacks
         // that fire during setViewControllers see the fresh array.
-        context.coordinator.artworks       = artworks
-        context.coordinator.onNearEnd      = onNearEnd
-        context.coordinator.onImageFailure = onImageFailure
-
-        guard artworks.count != previousCount,
-              let currentVC = pvc.viewControllers?.first else { return }
+        coordinator.artworks       = artworks
+        coordinator.onNearEnd      = onNearEnd
+        coordinator.onImageFailure = onImageFailure
 
         if artworks.count > previousCount {
             // When a fetchMore batch arrives, UIPageViewController still holds a
             // stale nil in its adjacent-page cache from the last call to
             // viewControllerAfter that returned nil (the old end of the list).
-            // Re-presenting the current page flushes that cache.
-            pvc.setViewControllers([currentVC], direction: .forward, animated: false)
-        } else {
+            // Re-presenting the page at savedIndex flushes that cache. Using the
+            // delegate-tracked index (not pvc.viewControllers?.first) is safer:
+            // the pvc's array can be transiently nil after visibility changes.
+            guard savedIndex < artworks.count else { return }
+            let vc = pvc.viewControllers?.first ?? coordinator.makePage(at: savedIndex)
+            pvc.setViewControllers([vc], direction: .forward, animated: false)
+
+        } else if artworks.count < previousCount {
             // An artwork was removed (its image failed). Navigate to the same
             // index — which now points to the next artwork — or the last page
             // if the failed card was at the end of the list.
             guard !artworks.isEmpty else { return }
-            let targetIndex = min(currentVC.view.tag, artworks.count - 1)
+            let targetIndex = min(savedIndex, artworks.count - 1)
+            coordinator.currentIndex = targetIndex
             pvc.setViewControllers(
-                [context.coordinator.makePage(at: targetIndex)],
+                [coordinator.makePage(at: targetIndex)],
+                direction: .forward,
+                animated: false
+            )
+
+        } else if pvc.viewControllers?.first?.view.tag != savedIndex {
+            // Count is unchanged but the displayed page doesn't match the
+            // last-known index. This happens when UIPageViewController loses
+            // its page after a tab-switch visibility change. Restore silently.
+            guard savedIndex < artworks.count else { return }
+            pvc.setViewControllers(
+                [coordinator.makePage(at: savedIndex)],
                 direction: .forward,
                 animated: false
             )
@@ -282,6 +302,11 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
         let modelContainer: ModelContainer
         var onNearEnd: () -> Void
         var onImageFailure: (String) -> Void
+        /// The index of the page the user last settled on. Updated by the
+        /// delegate so updateUIViewController always has a reliable position
+        /// to restore — even if UIPageViewController's viewControllers array
+        /// is transiently empty after a visibility-state change.
+        var currentIndex: Int = 0
 
         init(
             artworks: [Artwork],
@@ -339,6 +364,22 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
 
             guard index < artworks.count - 1 else { return nil }
             return makePage(at: index + 1)
+        }
+
+        // MARK: UIPageViewControllerDelegate
+
+        func pageViewController(
+            _ pvc: UIPageViewController,
+            didFinishAnimating finished: Bool,
+            previousViewControllers: [UIViewController],
+            transitionCompleted completed: Bool
+        ) {
+            // Only record the index when the swipe fully commits. A cancelled
+            // swipe leaves the user on the previous page, which previousViewControllers
+            // still holds, so we ignore it. This keeps currentIndex in sync with
+            // what the user actually sees even during rapid or cancelled swipes.
+            guard completed, let vc = pvc.viewControllers?.first else { return }
+            currentIndex = vc.view.tag
         }
     }
 }
