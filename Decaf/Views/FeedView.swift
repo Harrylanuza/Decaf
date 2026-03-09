@@ -171,7 +171,6 @@ struct FeedView: View {
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
-        print("[Feed] load() — Met: \(met.count), Rijksmuseum: \(rijks.count), AIC: \(aic.count)")
         let combined = (met + rijks + aic).shuffled()
         let fresh = combined.filter { seenIDs.insert($0.id).inserted }
 
@@ -194,7 +193,6 @@ struct FeedView: View {
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
-        print("[Feed] fetchMore() — Met: \(met.count), Rijksmuseum: \(rijks.count), AIC: \(aic.count)")
         let newBatch = (met + rijks + aic).shuffled()
         let fresh = newBatch.filter { seenIDs.insert($0.id).inserted }
 
