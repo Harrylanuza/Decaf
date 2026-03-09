@@ -171,6 +171,10 @@ struct ArtworkCard: View {
                 imageAt: artwork.imageURL,
                 artworkID: artwork.id
             ) {
+                // Guard against the race where the user unsaves before the
+                // download finishes. SwiftData sets modelContext to nil on
+                // deletion, so writing to a deleted item is a no-op here.
+                guard item.modelContext != nil else { return }
                 item.localImagePath = path
             }
         }
