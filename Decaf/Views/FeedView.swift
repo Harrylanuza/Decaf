@@ -171,7 +171,8 @@ struct FeedView: View {
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
-        let combined = (met + rijks + aic).shuffled()
+        let nga   = NGAService.shared.fetchRandomPaintings(count: 10)
+        let combined = (met + rijks + aic + nga).shuffled()
         let fresh = combined.filter { seenIDs.insert($0.id).inserted }
 
         if fresh.isEmpty {
@@ -193,7 +194,8 @@ struct FeedView: View {
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
-        let newBatch = (met + rijks + aic).shuffled()
+        let nga   = NGAService.shared.fetchRandomPaintings(count: 10)
+        let newBatch = (met + rijks + aic + nga).shuffled()
         let fresh = newBatch.filter { seenIDs.insert($0.id).inserted }
 
         if !fresh.isEmpty {

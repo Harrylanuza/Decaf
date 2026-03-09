@@ -26,6 +26,8 @@
 		000000000000000000000084 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000056 /* ShareButton.swift */; };
 		000000000000000000000085 /* ArtInstituteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000057 /* ArtInstituteService.swift */; };
 		000000000000000000000086 /* ImageDimensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000058 /* ImageDimensions.swift */; };
+		000000000000000000000091 /* nga_paintings.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000090 /* nga_paintings.json */; };
+		000000000000000000000093 /* NGAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000092 /* NGAService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		000000000000000000000057 /* ArtInstituteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtInstituteService.swift; sourceTree = "<group>"; };
 		000000000000000000000058 /* ImageDimensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDimensions.swift; sourceTree = "<group>"; };
 		000000000000000000000080 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		000000000000000000000090 /* nga_paintings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = nga_paintings.json; sourceTree = "<group>"; };
+		000000000000000000000092 /* NGAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NGAService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +92,7 @@
 				000000000000000000000040 /* Views */,
 				000000000000000000000050 /* Services */,
 				000000000000000000000021 /* Assets.xcassets */,
+				000000000000000000000090 /* nga_paintings.json */,
 			);
 			path = Decaf;
 			sourceTree = "<group>";
@@ -122,6 +127,7 @@
 				000000000000000000000058 /* ImageDimensions.swift */,
 				000000000000000000000054 /* ImageStore.swift */,
 				000000000000000000000051 /* MetService.swift */,
+				000000000000000000000092 /* NGAService.swift */,
 				000000000000000000000055 /* NetworkMonitor.swift */,
 				000000000000000000000053 /* RijksmuseumService.swift */,
 			);
@@ -187,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				000000000000000000000073 /* Assets.xcassets in Resources */,
+				000000000000000000000091 /* nga_paintings.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +222,7 @@
 				000000000000000000000084 /* ShareButton.swift in Sources */,
 				000000000000000000000085 /* ArtInstituteService.swift in Sources */,
 				000000000000000000000086 /* ImageDimensions.swift in Sources */,
+				000000000000000000000093 /* NGAService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
