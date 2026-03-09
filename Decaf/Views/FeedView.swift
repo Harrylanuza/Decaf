@@ -236,11 +236,9 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
 
         // Set the first page. artworks is guaranteed non-empty here because
         // FeedView only shows this view in its non-empty else branch.
-        pvc.setViewControllers(
-            [context.coordinator.makePage(at: 0)],
-            direction: .forward,
-            animated: false
-        )
+        if let first = context.coordinator.makePage(at: 0) {
+            pvc.setViewControllers([first], direction: .forward, animated: false)
+        }
 
         return pvc
     }
@@ -265,7 +263,7 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
             // delegate-tracked index (not pvc.viewControllers?.first) is safer:
             // the pvc's array can be transiently nil after visibility changes.
             guard savedIndex < artworks.count else { return }
-            let vc = pvc.viewControllers?.first ?? coordinator.makePage(at: savedIndex)
+            guard let vc = pvc.viewControllers?.first ?? coordinator.makePage(at: savedIndex) else { return }
             pvc.setViewControllers([vc], direction: .forward, animated: false)
 
         } else if artworks.count < previousCount {
@@ -285,11 +283,8 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
             let adjustedIndex = removedIndex < savedIndex ? savedIndex - 1 : savedIndex
             let targetIndex = min(adjustedIndex, artworks.count - 1)
             coordinator.currentIndex = targetIndex
-            pvc.setViewControllers(
-                [coordinator.makePage(at: targetIndex)],
-                direction: .forward,
-                animated: false
-            )
+            guard let page = coordinator.makePage(at: targetIndex) else { return }
+            pvc.setViewControllers([page], direction: .forward, animated: false)
 
         }
     }
@@ -320,8 +315,10 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
         }
 
         /// Builds a hosting controller for the artwork at the given index.
-        /// The view.tag stores the index so data-source callbacks can identify pages.
-        func makePage(at index: Int) -> UIViewController {
+        /// Returns nil for any out-of-range index so stale view.tag values from
+        /// UIPageViewController's cache never crash the data source callbacks.
+        func makePage(at index: Int) -> UIViewController? {
+            guard index >= 0, index < artworks.count else { return nil }
             let artwork = artworks[index]
             var card = ArtworkCard(artwork: artwork)
             card.onImageFailure = { [weak self] in self?.onImageFailure(artwork.id) }
