@@ -71,8 +71,9 @@ actor MetService {
         ) else { throw URLError(.badURL) }
 
         components.queryItems = [
-            URLQueryItem(name: "departmentIds", value: departmentIDs.map(String.init).joined(separator: "|")),
-            URLQueryItem(name: "hasImages",     value: "true"),
+            URLQueryItem(name: "departmentIds",  value: departmentIDs.map(String.init).joined(separator: "|")),
+            URLQueryItem(name: "hasImages",      value: "true"),
+            URLQueryItem(name: "isPublicDomain", value: "true"),
         ]
 
         guard let url = components.url else { throw URLError(.badURL) }
