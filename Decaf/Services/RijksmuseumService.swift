@@ -87,7 +87,11 @@ private struct OAIRecord {
     var hasImage: Bool { !imageURLString.isEmpty }
 
     var isPublicDomain: Bool {
-        rights.contains("publicdomain") || rights.contains("creativecommons")
+        // Only accept Public Domain Mark and CC0 — both contain "publicdomain"
+        // in their URLs (creativecommons.org/publicdomain/mark/ and .../zero/).
+        // The broader "creativecommons" check is removed because CC-BY, CC-SA,
+        // and similar licensed works must not be redistributed without attribution.
+        rights.contains("publicdomain")
     }
 
     var imageURL: URL? {
