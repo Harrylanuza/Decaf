@@ -20,6 +20,23 @@ struct FavoritesView: View {
         .fullScreenCover(item: $selectedItem) { item in
             if let artwork = item.asArtwork {
                 CupDetailView(artwork: artwork)
+            } else {
+                // Fallback: asArtwork returned nil (malformed URL). Show a
+                // dismiss button so the user is never trapped on a blank screen.
+                ZStack {
+                    Theme.background.ignoresSafeArea()
+                    Button { selectedItem = nil } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .light))
+                            .foregroundStyle(Theme.muted)
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.top, 60)
+                    .padding(.leading, 12)
+                }
             }
         }
     }
