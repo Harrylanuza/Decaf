@@ -6,42 +6,69 @@ actor RijksmuseumService {
     private let baseURL = URL(string: "https://data.rijksmuseum.nl/oai")!
     private let session = URLSession.shared
 
-    // Painting-focused OAI-PMH sets. One is chosen randomly each session
-    // so the feed draws from different slices of the collection over time.
+    // Painting-focused OAI-PMH sets harvested in full each session.
     private let paintingSets = [
-        "261208",   // Schilderijen — general paintings
-        "26121",    // Dutch Paintings of the Seventeenth Century
-        "26118",    // Flemish Paintings
-        "2616",     // Early Netherlandish Paintings
+        "261208",   // Schilderijen — general paintings (~4 900 records)
+        "26121",    // Dutch Paintings of the Seventeenth Century (~720 records)
+        "26118",    // Flemish Paintings (~130 records)
+        "2616",     // Early Netherlandish Paintings (~160 records)
     ]
+
+    // Full record pool built by the background harvest. nil until complete.
+    private var harvestedRecords: [OAIRecord]? = nil
+    // Non-nil once the harvest has been started, preventing a double-start.
+    private var harvestTask: Task<Void, Never>? = nil
 
     // MARK: - Public API
 
     /// Fetches a random selection of public-domain paintings with images,
     /// silently omitting any whose dimensions are too extreme to display well
     /// in a full-screen portrait card (panoramics, narrow columns, tiny images).
+    ///
+    /// On the first call the background harvest is started. While it is still
+    /// running a single-page fallback (the original behaviour) is used so the
+    /// feed is never blocked. Once the harvest completes, subsequent calls
+    /// sample randomly from the full ~5 900-record pool.
     func fetchRandomPaintings(count: Int = 10) async throws -> [Artwork] {
-        guard let set = paintingSets.randomElement() else { return [] }
+        // Kick off the background harvest on first call if not already running.
+        startHarvestIfNeeded()
 
-        guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
-        else { throw URLError(.badURL) }
+        // Build the candidate list — full pool when ready, single page otherwise.
+        let candidates: [OAIRecord]
 
-        components.queryItems = [
-            URLQueryItem(name: "verb",           value: "ListRecords"),
-            URLQueryItem(name: "metadataPrefix", value: "oai_dc"),
-            URLQueryItem(name: "set",            value: set),
-        ]
+        if let pool = harvestedRecords {
+            // Harvest complete: sample uniformly from the entire collection.
+            candidates = Array(
+                pool
+                    .filter { $0.hasImage && $0.isPublicDomain }
+                    .shuffled()
+                    .prefix(count * 4)
+            )
+        } else {
+            // Harvest still in progress — fall back to a single-page fetch.
+            guard let set = paintingSets.randomElement() else { return [] }
 
-        guard let url = components.url else { throw URLError(.badURL) }
-        let (data, _) = try await session.data(from: url)
-        let records = OAIParser.parse(data)
+            guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+            else { throw URLError(.badURL) }
+
+            components.queryItems = [
+                URLQueryItem(name: "verb",           value: "ListRecords"),
+                URLQueryItem(name: "metadataPrefix", value: "oai_dc"),
+                URLQueryItem(name: "set",            value: set),
+            ]
+
+            guard let url = components.url else { throw URLError(.badURL) }
+            let (data, _) = try await session.data(from: url)
+            let (records, _) = OAIParser.parse(data)
+            candidates = Array(
+                records
+                    .filter { $0.hasImage && $0.isPublicDomain }
+                    .shuffled()
+                    .prefix(count * 4)
+            )
+        }
 
         // Pull more candidates than needed so filtering still yields enough.
-        let candidates = records
-            .filter { $0.hasImage && $0.isPublicDomain }
-            .shuffled()
-            .prefix(count * 4)
-
         return await withTaskGroup(of: Artwork?.self) { group in
             for record in candidates {
                 group.addTask {
@@ -70,6 +97,69 @@ actor RijksmuseumService {
             }
             return Array(results.prefix(count))
         }
+    }
+
+    // MARK: - Background Harvest
+
+    /// Starts the full-collection harvest if it has not already been started.
+    /// Safe to call multiple times — only the first call has any effect.
+    private func startHarvestIfNeeded() {
+        guard harvestTask == nil else { return }
+        harvestTask = Task { await performHarvest() }
+    }
+
+    /// Walks the complete OAI-PMH token chain for every set, accumulating all
+    /// records into `harvestedRecords`. Runs entirely in the background; each
+    /// `await session.data(from:)` suspends and yields the actor executor so
+    /// concurrent callers of `fetchRandomPaintings` are never blocked.
+    ///
+    /// A network error on any single page breaks out of that set's loop but
+    /// the harvest continues with the remaining sets.
+    private func performHarvest() async {
+        var allRecords: [OAIRecord] = []
+        var seen = Set<String>()   // deduplicates across overlapping sets
+
+        for set in paintingSets {
+            // --- First page for this set ---
+            guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+            else { continue }
+            components.queryItems = [
+                URLQueryItem(name: "verb",           value: "ListRecords"),
+                URLQueryItem(name: "metadataPrefix", value: "oai_dc"),
+                URLQueryItem(name: "set",            value: set),
+            ]
+            guard let url = components.url,
+                  let (data, _) = try? await session.data(from: url)
+            else { continue }
+
+            let (firstRecords, firstToken) = OAIParser.parse(data)
+            for r in firstRecords where !r.lodIdentifier.isEmpty {
+                if seen.insert(r.lodIdentifier).inserted { allRecords.append(r) }
+            }
+
+            // --- Follow the token chain for remaining pages ---
+            var currentToken = firstToken
+            while let token = currentToken, !token.isEmpty {
+                guard var tokenComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+                else { break }
+                // OAI-PMH spec: resumptionToken requests must have ONLY verb + token.
+                tokenComponents.queryItems = [
+                    URLQueryItem(name: "verb",             value: "ListRecords"),
+                    URLQueryItem(name: "resumptionToken",  value: token),
+                ]
+                guard let tokenURL = tokenComponents.url,
+                      let (tokenData, _) = try? await session.data(from: tokenURL)
+                else { break }
+
+                let (moreRecords, nextToken) = OAIParser.parse(tokenData)
+                for r in moreRecords where !r.lodIdentifier.isEmpty {
+                    if seen.insert(r.lodIdentifier).inserted { allRecords.append(r) }
+                }
+                currentToken = nextToken
+            }
+        }
+
+        harvestedRecords = allRecords
     }
 }
 
@@ -104,17 +194,20 @@ private struct OAIRecord {
 
 private final class OAIParser: NSObject, XMLParserDelegate {
     private var records: [OAIRecord] = []
+    private var resumptionToken: String? = nil
     private var current = OAIRecord()
     private var inHeader = false
     private var inMetadata = false
     private var currentText = ""
 
-    static func parse(_ data: Data) -> [OAIRecord] {
+    /// Parses an OAI-PMH response and returns the records it contains together
+    /// with the resumptionToken for the next page (nil when this is the last page).
+    static func parse(_ data: Data) -> (records: [OAIRecord], resumptionToken: String?) {
         let parser = OAIParser()
         let xml = XMLParser(data: data)
         xml.delegate = parser
         xml.parse()
-        return parser.records
+        return (parser.records, parser.resumptionToken)
     }
 
     func parser(_ parser: XMLParser,
@@ -179,6 +272,11 @@ private final class OAIParser: NSObject, XMLParserDelegate {
 
         case "record":
             records.append(current)
+
+        case "resumptionToken":
+            // An empty element signals the final page; a non-empty value is the
+            // cursor token to pass as resumptionToken on the next request.
+            resumptionToken = text.isEmpty ? nil : text
 
         default:
             break
