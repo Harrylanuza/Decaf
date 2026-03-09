@@ -56,7 +56,7 @@ actor ArtInstituteService {
         }
 
         // Elasticsearch caps search results at 10,000; at 100/page that is 100 pages.
-        let pageCount = max(1, min((cachedTotalItems! + 99) / 100, 100))
+        let pageCount = max(1, min((cachedTotalItems! + 99) / 100, 10))
         let page = Int.random(in: 1...pageCount)
 
         let response = try await post(page: page, limit: 100)
@@ -75,11 +75,11 @@ actor ArtInstituteService {
                 "bool": [
                     "filter": [
                         ["term": ["is_public_domain": true]],
-                        ["term": ["artwork_type_title": "Painting"]],
+                        ["term": ["artwork_type_id": 1]],
                     ]
                 ]
             ],
-            "fields": ["id", "title", "artist_display", "date_display", "image_id"],
+            "fields": "id,title,artist_display,date_display,image_id",
             "limit": limit,
             "page":  page,
         ]
@@ -90,7 +90,8 @@ actor ArtInstituteService {
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode(SearchResponse.self, from: data)
+        let decoded = try JSONDecoder().decode(SearchResponse.self, from: data)
+        return decoded
     }
 
     private func artwork(from obj: AICObject) -> Artwork? {
