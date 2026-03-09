@@ -37,10 +37,17 @@ struct ShareButton: View {
             I saw this painting on Decaf and thought of you.
             """
 
-        // URLSession checks the shared URL cache first, so images already on screen
-        // are returned almost instantly. File URLs (for saved-offline favourites) work too.
-        if let (data, _) = try? await URLSession.shared.data(from: artwork.imageURL),
-           let image = UIImage(data: data) {
+        // File URLs (saved offline favourites) must be read directly from disk —
+        // URLSession does not support file:// schemes. Remote URLs use URLSession,
+        // which checks the shared cache first so on-screen images load instantly.
+        let imageData: Data?
+        if artwork.imageURL.isFileURL {
+            imageData = try? Data(contentsOf: artwork.imageURL)
+        } else {
+            imageData = try? await URLSession.shared.data(from: artwork.imageURL).0
+        }
+
+        if let data = imageData, let image = UIImage(data: data) {
             shareItems = [image, message]
         } else {
             shareItems = [message]
