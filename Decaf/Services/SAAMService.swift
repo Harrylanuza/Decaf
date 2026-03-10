@@ -30,7 +30,6 @@ struct SAAMService {
         let artist: String
         let date: String
         let medium: String
-        let credit: String
         let idsId: String
     }
 
