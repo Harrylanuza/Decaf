@@ -71,7 +71,7 @@ struct SAAMService {
             title:      record.title.isEmpty ? "Untitled" : record.title,
             artistName: record.artist.isEmpty ? "Unknown Artist" : record.artist,
             date:       record.date,
-            credit:     "Smithsonian American Art Museum"
+            credit:     "Smithsonian Institution"
         )
     }
 }

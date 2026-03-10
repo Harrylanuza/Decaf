@@ -76,7 +76,7 @@ struct FSGService {
             title:      record.title.isEmpty ? "Untitled" : record.title,
             artistName: record.artist.isEmpty ? "Unknown Artist" : record.artist,
             date:       record.date,
-            credit:     "Freer Gallery of Art and Arthur M. Sackler Gallery"
+            credit:     "Smithsonian Institution"
         )
     }
 }
