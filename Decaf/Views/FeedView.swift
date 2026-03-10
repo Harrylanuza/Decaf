@@ -165,16 +165,18 @@ struct FeedView: View {
         isLoading = true
         fetchError = nil
 
-        async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
+        async let metTask  = MetService.shared.fetchRandomArtworks(count: 12)
         async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
         async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
+        async let cmaTask   = ClevelandService.shared.fetchRandomPaintings(count: 10)
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
+        let cma   = (try? await cmaTask)   ?? []
         let nga   = NGAService.shared.fetchRandomPaintings(count: 10)
         let saam  = SAAMService.shared.fetchRandomPaintings(count: 12)
         let fsg   = FSGService.shared.fetchRandomPaintings(count: 6)
-        let combined = (met + rijks + aic + nga + saam + fsg).shuffled()
+        let combined = (met + rijks + aic + cma + nga + saam + fsg).shuffled()
         let fresh = combined.filter { seenIDs.insert($0.id).inserted }
 
         if fresh.isEmpty {
@@ -193,13 +195,15 @@ struct FeedView: View {
         async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
         async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
         async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
+        async let cmaTask   = ClevelandService.shared.fetchRandomPaintings(count: 10)
         let met   = (try? await metTask)   ?? []
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
+        let cma   = (try? await cmaTask)   ?? []
         let nga   = NGAService.shared.fetchRandomPaintings(count: 10)
         let saam  = SAAMService.shared.fetchRandomPaintings(count: 12)
         let fsg   = FSGService.shared.fetchRandomPaintings(count: 6)
-        let newBatch = (met + rijks + aic + nga + saam + fsg).shuffled()
+        let newBatch = (met + rijks + aic + cma + nga + saam + fsg).shuffled()
         let fresh = newBatch.filter { seenIDs.insert($0.id).inserted }
 
         if !fresh.isEmpty {
