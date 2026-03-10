@@ -118,10 +118,27 @@ actor ClevelandService {
     }
 
     private func artwork(from obj: CMAObject) -> Artwork? {
-        // Exclude palm-leaf manuscript folios — they are tagged as paintings in
-        // the CMA data model but are not standalone works on canvas or panel.
-        let tech = obj.technique?.lowercased() ?? ""
-        guard !tech.contains("palm leaf") else { return nil }
+        // Exclude manuscript content tagged as paintings in the CMA data model.
+        //
+        // Technique-based:
+        //   "palm leaf" — manuscript folios written/painted on palm leaves
+        //
+        // Title-based (four groups identified by audit, ~1,217 records total):
+        //   "tuti-nama"   — 654 Tuti-nama (Tales of a Parrot) illustrated folios
+        //   starts "text," — 471 explicit text-side folios (Kalpa-sutra, Perfection
+        //                     of Wisdom, etc.) whose title begins "Text, Folio …"
+        //   "-sutra"/"sutra " — 47 illustrated folio sides from the same sutra
+        //                       manuscripts, identified by the sutra name in the title
+        //   "calligraphy" — 45 calligraphic text pages
+        let tech  = obj.technique?.lowercased() ?? ""
+        let title = obj.title?.lowercased() ?? ""
+        guard !tech.contains("palm leaf"),
+              !title.contains("tuti-nama"),
+              !title.hasPrefix("text,"),
+              !title.contains("-sutra"),
+              !title.contains("sutra "),
+              !title.contains("calligraphy")
+        else { return nil }
 
         // Require a web image with valid pixel dimensions for aspect-ratio check.
         guard let web = obj.images?.web,
