@@ -28,6 +28,10 @@
 		000000000000000000000086 /* ImageDimensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000058 /* ImageDimensions.swift */; };
 		000000000000000000000091 /* nga_paintings.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000090 /* nga_paintings.json */; };
 		000000000000000000000093 /* NGAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000092 /* NGAService.swift */; };
+		000000000000000000000095 /* saam_paintings.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000094 /* saam_paintings.json */; };
+		000000000000000000000097 /* fsg_paintings.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000096 /* fsg_paintings.json */; };
+		000000000000000000000099 /* SAAMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000098 /* SAAMService.swift */; };
+		000000000000000000000009B /* FSGService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009A /* FSGService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +57,10 @@
 		000000000000000000000080 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		000000000000000000000090 /* nga_paintings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = nga_paintings.json; sourceTree = "<group>"; };
 		000000000000000000000092 /* NGAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NGAService.swift; sourceTree = "<group>"; };
+		000000000000000000000094 /* saam_paintings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = saam_paintings.json; sourceTree = "<group>"; };
+		000000000000000000000096 /* fsg_paintings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = fsg_paintings.json; sourceTree = "<group>"; };
+		000000000000000000000098 /* SAAMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SAAMService.swift; sourceTree = "<group>"; };
+		000000000000000000000009A /* FSGService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSGService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +101,8 @@
 				000000000000000000000050 /* Services */,
 				000000000000000000000021 /* Assets.xcassets */,
 				000000000000000000000090 /* nga_paintings.json */,
+			000000000000000000000094 /* saam_paintings.json */,
+			000000000000000000000096 /* fsg_paintings.json */,
 			);
 			path = Decaf;
 			sourceTree = "<group>";
@@ -128,6 +138,8 @@
 				000000000000000000000054 /* ImageStore.swift */,
 				000000000000000000000051 /* MetService.swift */,
 				000000000000000000000092 /* NGAService.swift */,
+				000000000000000000000098 /* SAAMService.swift */,
+				000000000000000000000009A /* FSGService.swift */,
 				000000000000000000000055 /* NetworkMonitor.swift */,
 				000000000000000000000053 /* RijksmuseumService.swift */,
 			);
@@ -194,6 +206,8 @@
 			files = (
 				000000000000000000000073 /* Assets.xcassets in Resources */,
 				000000000000000000000091 /* nga_paintings.json in Resources */,
+				000000000000000000000095 /* saam_paintings.json in Resources */,
+				000000000000000000000097 /* fsg_paintings.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +237,8 @@
 				000000000000000000000085 /* ArtInstituteService.swift in Sources */,
 				000000000000000000000086 /* ImageDimensions.swift in Sources */,
 				000000000000000000000093 /* NGAService.swift in Sources */,
+				000000000000000000000099 /* SAAMService.swift in Sources */,
+				000000000000000000000009B /* FSGService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
