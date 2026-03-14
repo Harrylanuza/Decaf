@@ -174,10 +174,11 @@ struct FeedView: View {
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
         let cma   = (try? await cmaTask)   ?? []
-        let nga   = NGAService.shared.fetchRandomPaintings(count: 10)
-        let saam  = SAAMService.shared.fetchRandomPaintings(count: 12)
-        let fsg   = FSGService.shared.fetchRandomPaintings(count: 6)
-        let combined = (met + rijks + aic + cma + nga + saam + fsg).shuffled()
+        let nga     = NGAService.shared.fetchRandomPaintings(count: 10)
+        let saam    = SAAMService.shared.fetchRandomPaintings(count: 12)
+        let fsg     = FSGService.shared.fetchRandomPaintings(count: 6)
+        let walters = WaltersService.shared.fetchRandomPaintings(count: 10)
+        let combined = (met + rijks + aic + cma + nga + saam + fsg + walters).shuffled()
         let fresh = combined.filter {
             guard seenIDs.insert($0.id).inserted else { return false }
             SeenStore.record($0.id)
@@ -205,10 +206,11 @@ struct FeedView: View {
         let rijks = (try? await rijksTask) ?? []
         let aic   = (try? await aicTask)   ?? []
         let cma   = (try? await cmaTask)   ?? []
-        let nga   = NGAService.shared.fetchRandomPaintings(count: 10)
-        let saam  = SAAMService.shared.fetchRandomPaintings(count: 12)
-        let fsg   = FSGService.shared.fetchRandomPaintings(count: 6)
-        let newBatch = (met + rijks + aic + cma + nga + saam + fsg).shuffled()
+        let nga     = NGAService.shared.fetchRandomPaintings(count: 10)
+        let saam    = SAAMService.shared.fetchRandomPaintings(count: 12)
+        let fsg     = FSGService.shared.fetchRandomPaintings(count: 6)
+        let walters = WaltersService.shared.fetchRandomPaintings(count: 10)
+        let newBatch = (met + rijks + aic + cma + nga + saam + fsg + walters).shuffled()
         let fresh = newBatch.filter {
             guard seenIDs.insert($0.id).inserted else { return false }
             SeenStore.record($0.id)

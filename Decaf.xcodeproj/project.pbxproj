@@ -33,6 +33,8 @@
 		000000000000000000000099 /* SAAMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000098 /* SAAMService.swift */; };
 		000000000000000000000009B /* FSGService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009A /* FSGService.swift */; };
 		00000000000000000000009D /* ClevelandService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000009C /* ClevelandService.swift */; };
+		00000000000000000000009F /* walters_paintings.json in Resources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000009E /* walters_paintings.json */; };
+		0000000000000000000000A1 /* WaltersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A0 /* WaltersService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		000000000000000000000098 /* SAAMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SAAMService.swift; sourceTree = "<group>"; };
 		000000000000000000000009A /* FSGService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSGService.swift; sourceTree = "<group>"; };
 		00000000000000000000009C /* ClevelandService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClevelandService.swift; sourceTree = "<group>"; };
+		00000000000000000000009E /* walters_paintings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = walters_paintings.json; sourceTree = "<group>"; };
+		0000000000000000000000A0 /* WaltersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaltersService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,7 @@
 				000000000000000000000090 /* nga_paintings.json */,
 			000000000000000000000094 /* saam_paintings.json */,
 			000000000000000000000096 /* fsg_paintings.json */,
+			00000000000000000000009E /* walters_paintings.json */,
 			);
 			path = Decaf;
 			sourceTree = "<group>";
@@ -143,6 +148,7 @@
 				000000000000000000000098 /* SAAMService.swift */,
 				000000000000000000000009A /* FSGService.swift */,
 				00000000000000000000009C /* ClevelandService.swift */,
+				0000000000000000000000A0 /* WaltersService.swift */,
 				000000000000000000000055 /* NetworkMonitor.swift */,
 				000000000000000000000053 /* RijksmuseumService.swift */,
 			);
@@ -211,6 +217,7 @@
 				000000000000000000000091 /* nga_paintings.json in Resources */,
 				000000000000000000000095 /* saam_paintings.json in Resources */,
 				000000000000000000000097 /* fsg_paintings.json in Resources */,
+				00000000000000000000009F /* walters_paintings.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +250,7 @@
 				000000000000000000000099 /* SAAMService.swift in Sources */,
 				000000000000000000000009B /* FSGService.swift in Sources */,
 				00000000000000000000009D /* ClevelandService.swift in Sources */,
+				0000000000000000000000A1 /* WaltersService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
