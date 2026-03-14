@@ -3,7 +3,7 @@ import SwiftData
 
 struct FeedView: View {
     @State private var artworks: [Artwork] = []
-    @State private var seenIDs: Set<String> = []
+    @State private var seenIDs: Set<String> = SeenStore.load()
     @State private var isLoading = true
     @State private var isFetchingMore = false
     @State private var fetchError: Error?
@@ -40,6 +40,7 @@ struct FeedView: View {
                 // it is never re-fetched; the user never sees the broken card.
                 artworks.removeAll { $0.id == id }
                 seenIDs.insert(id)
+                SeenStore.record(id)
             }
         )
         .ignoresSafeArea(edges: .top)
@@ -177,7 +178,11 @@ struct FeedView: View {
         let saam  = SAAMService.shared.fetchRandomPaintings(count: 12)
         let fsg   = FSGService.shared.fetchRandomPaintings(count: 6)
         let combined = (met + rijks + aic + cma + nga + saam + fsg).shuffled()
-        let fresh = combined.filter { seenIDs.insert($0.id).inserted }
+        let fresh = combined.filter {
+            guard seenIDs.insert($0.id).inserted else { return false }
+            SeenStore.record($0.id)
+            return true
+        }
 
         if fresh.isEmpty {
             fetchError = URLError(.cannotLoadFromNetwork)
@@ -204,7 +209,11 @@ struct FeedView: View {
         let saam  = SAAMService.shared.fetchRandomPaintings(count: 12)
         let fsg   = FSGService.shared.fetchRandomPaintings(count: 6)
         let newBatch = (met + rijks + aic + cma + nga + saam + fsg).shuffled()
-        let fresh = newBatch.filter { seenIDs.insert($0.id).inserted }
+        let fresh = newBatch.filter {
+            guard seenIDs.insert($0.id).inserted else { return false }
+            SeenStore.record($0.id)
+            return true
+        }
 
         if !fresh.isEmpty {
             artworks.append(contentsOf: fresh)
@@ -387,6 +396,45 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
             guard completed, let vc = pvc.viewControllers?.first else { return }
             currentIndex = vc.view.tag
         }
+    }
+}
+
+// MARK: - SeenStore
+
+/// Persists recently seen artwork IDs across launches so the feed avoids
+/// repeating paintings within a 7-day / 500-painting rolling window.
+///
+/// Storage: a [String: Date] dictionary in UserDefaults keyed by artwork ID.
+/// On load, entries older than 7 days are pruned. On record, entries beyond
+/// the 500-entry cap are evicted oldest-first. Both operations are cheap at
+/// this scale (~15 KB worst case).
+enum SeenStore {
+    private static let key      = "seenArtworkIDs"
+    private static let maxAge   = TimeInterval(7 * 24 * 3600)
+    private static let maxCount = 500
+
+    /// Returns the set of artwork IDs seen within the last 7 days,
+    /// pruning stale entries from UserDefaults as a side effect.
+    static func load() -> Set<String> {
+        guard let dict = UserDefaults.standard.dictionary(forKey: key) as? [String: Date]
+        else { return [] }
+        let cutoff = Date().addingTimeInterval(-maxAge)
+        let fresh  = dict.filter { $0.value > cutoff }
+        if fresh.count != dict.count {
+            UserDefaults.standard.set(fresh, forKey: key)
+        }
+        return Set(fresh.keys)
+    }
+
+    /// Records a newly seen artwork ID, enforcing the 7-day / 500-entry cap.
+    static func record(_ id: String) {
+        var dict = (UserDefaults.standard.dictionary(forKey: key) as? [String: Date]) ?? [:]
+        dict[id] = Date()
+        if dict.count > maxCount {
+            let evict = dict.sorted { $0.value < $1.value }.prefix(dict.count - maxCount)
+            evict.forEach { dict.removeValue(forKey: $0.key) }
+        }
+        UserDefaults.standard.set(dict, forKey: key)
     }
 }
 
