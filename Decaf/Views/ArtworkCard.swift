@@ -64,7 +64,7 @@ struct ArtworkCard: View {
             // inset, above 20 pt bottom padding) and then offset down into place,
             // so scaledToFit() centres the painting within that safe zone.
             let topPad = max(topInset, 60)
-            let usableHeight = slot.size.height - topPad - 20
+            let usableHeight = slot.size.height - topPad - 60
             let maxW = slot.size.width - 56   // 28 pt per side
 
             AsyncImage(url: artwork.imageURL) { phase in

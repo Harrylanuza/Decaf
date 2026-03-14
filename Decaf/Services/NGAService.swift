@@ -73,7 +73,7 @@ struct NGAService {
             title:      record.title.isEmpty ? "Untitled" : record.title,
             artistName: record.artist.isEmpty ? "Unknown Artist" : record.artist,
             date:       record.date,
-            credit:     record.credit.isEmpty ? "National Gallery of Art, Washington" : record.credit
+            credit:     "National Gallery of Art, Washington"
         )
     }
 }
