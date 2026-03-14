@@ -36,7 +36,7 @@ struct ArtworkCard: View {
                     // natural anchor, and the caption below is a separate view.
                     .overlay(alignment: .bottom) {
                         HStack(spacing: 0) {
-                            FavoriteButton(artwork: artwork)
+                            FavoriteButton(artwork: artwork, onSave: animateSaveCup)
                             Spacer()
                             ShareButton(artwork: artwork)
                         }
@@ -101,14 +101,22 @@ struct ArtworkCard: View {
                 performDoubleTap()
             }
             .overlay {
-                // Double-tap save confirmation: cup rises and fades.
-                Image(systemName: "cup.and.saucer")
-                    .font(.system(size: 52, weight: .ultraLight))
-                    .foregroundStyle(Theme.ink)
-                    .opacity(cupOpacity)
-                    .scaleEffect(cupScale)
-                    .offset(y: cupOffset)
-                    .allowsHitTesting(false)
+                // Save confirmation: cup rises and fades. The linen circle
+                // behind the icon ensures it reads clearly on both pale and
+                // dark paintings; the shadow lifts it off very light canvases.
+                ZStack {
+                    Circle()
+                        .fill(Theme.background.opacity(0.72))
+                        .frame(width: 90, height: 90)
+                        .shadow(color: .black.opacity(0.18), radius: 12, x: 0, y: 4)
+                    Image(systemName: "cup.and.saucer")
+                        .font(.system(size: 36, weight: .light))
+                        .foregroundStyle(Theme.ink)
+                }
+                .opacity(cupOpacity)
+                .scaleEffect(cupScale)
+                .offset(y: cupOffset)
+                .allowsHitTesting(false)
             }
         }
     }

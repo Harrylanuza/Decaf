@@ -3,12 +3,16 @@ import SwiftData
 
 struct FavoriteButton: View {
     let artwork: Artwork
+    /// Called when the button adds a new favourite (not when it removes one).
+    /// ArtworkCard uses this to trigger the save-confirmation animation.
+    var onSave: (() -> Void)? = nil
 
     @Environment(\.modelContext) private var context
     @Query private var matches: [FavoriteItem]
 
-    init(artwork: Artwork) {
+    init(artwork: Artwork, onSave: (() -> Void)? = nil) {
         self.artwork = artwork
+        self.onSave  = onSave
         let id = artwork.id
         _matches = Query(filter: #Predicate<FavoriteItem> { $0.artworkID == id })
     }
@@ -34,6 +38,7 @@ struct FavoriteButton: View {
         } else {
             let item = FavoriteItem(from: artwork)
             context.insert(item)
+            onSave?()
             // Download and cache the image in the background so the artwork
             // is fully available offline.  The insert is immediate so the UI
             // responds instantly; localImagePath is set once the file is ready.
