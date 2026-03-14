@@ -7,6 +7,7 @@ struct ArtworkCard: View {
     /// to silently remove the card so the user never sees a broken placeholder.
     var onImageFailure: (() -> Void)? = nil
     // Double-tap save confirmation state
+    @State private var titleExpanded = false
     @State private var cupOpacity: Double = 0
     @State private var cupScale: CGFloat = 0.75
     @State private var cupOffset: CGFloat = 0
@@ -35,10 +36,11 @@ struct ArtworkCard: View {
                     // natural anchor, and the caption below is a separate view.
                     .overlay(alignment: .bottom) {
                         HStack(spacing: 0) {
-                            ShareButton(artwork: artwork)
-                            Spacer()
                             FavoriteButton(artwork: artwork)
+                            Spacer()
+                            ShareButton(artwork: artwork)
                         }
+                        .padding(.horizontal, 15)
                         .padding(.bottom, 8)
                     }
                 caption
@@ -125,8 +127,9 @@ struct ArtworkCard: View {
                 Text(artwork.title)
                     .font(.system(.callout, design: .serif))
                     .foregroundStyle(Theme.ink)
-                    .lineLimit(1)
+                    .lineLimit(titleExpanded ? nil : 1)
                     .truncationMode(.tail)
+                    .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { titleExpanded.toggle() } }
 
                 Text(artwork.artistName)
                     .font(.system(.footnote, design: .serif))
