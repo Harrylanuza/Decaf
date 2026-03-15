@@ -35,6 +35,7 @@
 		00000000000000000000009D /* ClevelandService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000009C /* ClevelandService.swift */; };
 		00000000000000000000009F /* walters_paintings.json in Resources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000009E /* walters_paintings.json */; };
 		0000000000000000000000A1 /* WaltersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A0 /* WaltersService.swift */; };
+		0000000000000000000000A3 /* BelvedereService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2 /* BelvedereService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		00000000000000000000009C /* ClevelandService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClevelandService.swift; sourceTree = "<group>"; };
 		00000000000000000000009E /* walters_paintings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = walters_paintings.json; sourceTree = "<group>"; };
 		0000000000000000000000A0 /* WaltersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaltersService.swift; sourceTree = "<group>"; };
+		0000000000000000000000A2 /* BelvedereService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BelvedereService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 				000000000000000000000009A /* FSGService.swift */,
 				00000000000000000000009C /* ClevelandService.swift */,
 				0000000000000000000000A0 /* WaltersService.swift */,
+				0000000000000000000000A2 /* BelvedereService.swift */,
 				000000000000000000000055 /* NetworkMonitor.swift */,
 				000000000000000000000053 /* RijksmuseumService.swift */,
 			);
@@ -251,6 +254,7 @@
 				000000000000000000000009B /* FSGService.swift in Sources */,
 				00000000000000000000009D /* ClevelandService.swift in Sources */,
 				0000000000000000000000A1 /* WaltersService.swift in Sources */,
+				0000000000000000000000A3 /* BelvedereService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

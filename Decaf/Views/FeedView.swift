@@ -166,19 +166,21 @@ struct FeedView: View {
         isLoading = true
         fetchError = nil
 
-        async let metTask  = MetService.shared.fetchRandomArtworks(count: 12)
-        async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
-        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
-        async let cmaTask   = ClevelandService.shared.fetchRandomPaintings(count: 10)
-        let met   = (try? await metTask)   ?? []
-        let rijks = (try? await rijksTask) ?? []
-        let aic   = (try? await aicTask)   ?? []
-        let cma   = (try? await cmaTask)   ?? []
+        async let metTask       = MetService.shared.fetchRandomArtworks(count: 12)
+        async let rijksTask     = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
+        async let aicTask       = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
+        async let cmaTask       = ClevelandService.shared.fetchRandomPaintings(count: 10)
+        async let belvedereTask = BelvedereService.shared.fetchRandomPaintings(count: 10)
+        let met       = (try? await metTask)       ?? []
+        let rijks     = (try? await rijksTask)     ?? []
+        let aic       = (try? await aicTask)       ?? []
+        let cma       = (try? await cmaTask)       ?? []
+        let belvedere = (try? await belvedereTask) ?? []
         let nga     = NGAService.shared.fetchRandomPaintings(count: 10)
         let saam    = SAAMService.shared.fetchRandomPaintings(count: 12)
         let fsg     = FSGService.shared.fetchRandomPaintings(count: 6)
         let walters = WaltersService.shared.fetchRandomPaintings(count: 10)
-        let combined = (met + rijks + aic + cma + nga + saam + fsg + walters).shuffled()
+        let combined = (met + rijks + aic + cma + belvedere + nga + saam + fsg + walters).shuffled()
         let fresh = combined.filter {
             guard seenIDs.insert($0.id).inserted else { return false }
             SeenStore.record($0.id)
@@ -198,19 +200,21 @@ struct FeedView: View {
         guard !isFetchingMore else { return }
         isFetchingMore = true
 
-        async let metTask   = MetService.shared.fetchRandomArtworks(count: 12)
-        async let rijksTask = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
-        async let aicTask   = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
-        async let cmaTask   = ClevelandService.shared.fetchRandomPaintings(count: 10)
-        let met   = (try? await metTask)   ?? []
-        let rijks = (try? await rijksTask) ?? []
-        let aic   = (try? await aicTask)   ?? []
-        let cma   = (try? await cmaTask)   ?? []
+        async let metTask       = MetService.shared.fetchRandomArtworks(count: 12)
+        async let rijksTask     = RijksmuseumService.shared.fetchRandomPaintings(count: 8)
+        async let aicTask       = ArtInstituteService.shared.fetchRandomPaintings(count: 16)
+        async let cmaTask       = ClevelandService.shared.fetchRandomPaintings(count: 10)
+        async let belvedereTask = BelvedereService.shared.fetchRandomPaintings(count: 10)
+        let met       = (try? await metTask)       ?? []
+        let rijks     = (try? await rijksTask)     ?? []
+        let aic       = (try? await aicTask)       ?? []
+        let cma       = (try? await cmaTask)       ?? []
+        let belvedere = (try? await belvedereTask) ?? []
         let nga     = NGAService.shared.fetchRandomPaintings(count: 10)
         let saam    = SAAMService.shared.fetchRandomPaintings(count: 12)
         let fsg     = FSGService.shared.fetchRandomPaintings(count: 6)
         let walters = WaltersService.shared.fetchRandomPaintings(count: 10)
-        let newBatch = (met + rijks + aic + cma + nga + saam + fsg + walters).shuffled()
+        let newBatch = (met + rijks + aic + cma + belvedere + nga + saam + fsg + walters).shuffled()
         let fresh = newBatch.filter {
             guard seenIDs.insert($0.id).inserted else { return false }
             SeenStore.record($0.id)
