@@ -47,8 +47,8 @@ struct FeedView: View {
         .overlay(alignment: .bottom) {
             VStack(spacing: 0) {
                 if isFetchingMore {
-                    Image(systemName: "cup.and.saucer")
-                        .font(.system(size: 14, weight: .ultraLight))
+                    Text("percolating...")
+                        .font(.system(.caption2, design: .serif))
                         .foregroundStyle(Theme.muted.opacity(0.5))
                         .padding(.bottom, 12)
                 }
