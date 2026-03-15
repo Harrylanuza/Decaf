@@ -15,6 +15,7 @@
 		000000000000000000000067 /* FavoriteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000042 /* FavoriteButton.swift */; };
 		000000000000000000000068 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000043 /* FavoritesView.swift */; };
 		000000000000000000000069 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000044 /* FeedView.swift */; };
+		0000000000000000000000A5 /* AppIconPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A4 /* AppIconPreview.swift */; };
 		000000000000000000000071 /* MetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000051 /* MetService.swift */; };
 		000000000000000000000073 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000021 /* Assets.xcassets */; };
 		000000000000000000000074 /* RijksmuseumService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000053 /* RijksmuseumService.swift */; };
@@ -49,6 +50,7 @@
 		000000000000000000000042 /* FavoriteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteButton.swift; sourceTree = "<group>"; };
 		000000000000000000000043 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		000000000000000000000044 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		0000000000000000000000A4 /* AppIconPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconPreview.swift; sourceTree = "<group>"; };
 		000000000000000000000046 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		000000000000000000000047 /* BrewingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewingView.swift; sourceTree = "<group>"; };
 		000000000000000000000051 /* MetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetService.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				000000000000000000000042 /* FavoriteButton.swift */,
 				000000000000000000000043 /* FavoritesView.swift */,
 				000000000000000000000044 /* FeedView.swift */,
+				0000000000000000000000A4 /* AppIconPreview.swift */,
 				000000000000000000000046 /* OnboardingView.swift */,
 				000000000000000000000056 /* ShareButton.swift */,
 			);
@@ -241,6 +244,7 @@
 				000000000000000000000067 /* FavoriteButton.swift in Sources */,
 				000000000000000000000068 /* FavoritesView.swift in Sources */,
 				000000000000000000000069 /* FeedView.swift in Sources */,
+				0000000000000000000000A5 /* AppIconPreview.swift in Sources */,
 				000000000000000000000071 /* MetService.swift in Sources */,
 				000000000000000000000074 /* RijksmuseumService.swift in Sources */,
 				000000000000000000000081 /* Theme.swift in Sources */,
