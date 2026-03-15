@@ -56,7 +56,7 @@ actor ArtInstituteService {
         }
 
         // Elasticsearch caps search results at 10,000; at 100/page that is 100 pages.
-        let pageCount = max(1, min((cachedTotalItems! + 99) / 100, 10))
+        let pageCount = max(1, min((cachedTotalItems! + 99) / 100, 100))
         let page = Int.random(in: 1...pageCount)
 
         let response = try await post(page: page, limit: 100)
