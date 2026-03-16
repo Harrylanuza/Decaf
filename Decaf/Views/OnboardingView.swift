@@ -12,14 +12,14 @@ struct OnboardingView: View {
             VStack(spacing: 0) {
                 TabView(selection: $page) {
                     slide(
-                        title: "A quiet place to look\nat paintings.",
-                        body: "Public domain masterworks from the Met and the Rijksmuseum — free for everyone, free from noise."
+                        title: "A quiet place to look at paintings.",
+                        body: "Over 23,000 public domain works from the world's greatest museums — free for everyone, free from noise."
                     )
                     .tag(0)
 
                     slide(
                         title: "Simple by design.",
-                        body: "Swipe through paintings at your own pace. Tap the cup to save anything that stays with you."
+                        body: "Swipe through paintings at your own pace. Double tap or use the cup icon to save what stays with you. Revisit the paintings you love in your cup below, and share the ones others will love with the paper plane."
                     )
                     .tag(1)
 
