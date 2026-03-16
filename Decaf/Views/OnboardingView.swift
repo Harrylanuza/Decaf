@@ -13,7 +13,7 @@ struct OnboardingView: View {
                 TabView(selection: $page) {
                     slide(
                         title: "A quiet place to look at paintings.",
-                        body: "Over 23,000 public domain works from the world's greatest museums — free for everyone, free from noise."
+                        body: "Over 23,000 public domain works from the world's greatest museums — yours to explore, free from noise."
                     )
                     .tag(0)
 
