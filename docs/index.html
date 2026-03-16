@@ -1,1 +1,322 @@
-file:///Users/harrylanuza/Downloads/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decaf — A quiet place to look at paintings.</title>
+  <meta name="description" content="Over 23,000 public domain paintings from the world's greatest museums. No algorithm. No ads. Ever.">
+  <meta property="og:title" content="Decaf — A quiet place to look at paintings.">
+  <meta property="og:description" content="Over 23,000 public domain paintings from the world's greatest museums. No algorithm. No ads. Ever.">
+  <meta property="og:type" content="website">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      background: #F5F0E8;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #2C1F14;
+    }
+ 
+    .hero {
+      text-align: center;
+      padding: 80px 24px 64px;
+    }
+ 
+    .logo {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: #9E8468;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+ 
+    .headline {
+      font-size: 42px;
+      font-weight: 400;
+      color: #2C1F14;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+ 
+    .subhead {
+      font-size: 17px;
+      color: #6B5540;
+      font-style: italic;
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto 48px;
+    }
+ 
+    .appstore-btn {
+      display: inline-block;
+      background: #2C1F14;
+      color: #F5F0E8;
+      padding: 14px 32px;
+      border-radius: 32px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+ 
+    .appstore-btn:hover {
+      background: #4A3424;
+    }
+ 
+    .divider {
+      width: 1px;
+      height: 48px;
+      background: #D4C4A8;
+      margin: 64px auto;
+    }
+ 
+    .screenshots {
+      padding: 0 24px 64px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+ 
+    .phone-frame {
+      width: 160px;
+      height: 300px;
+      background: #F5F0E8;
+      border-radius: 24px;
+      border: 1.5px solid #C4B49A;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+ 
+    .phone-status {
+      height: 20px;
+      background: #F5F0E8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+ 
+    .phone-notch {
+      width: 60px;
+      height: 10px;
+      background: #E8DEC8;
+      border-radius: 0 0 8px 8px;
+    }
+ 
+    .phone-screen {
+      flex: 1;
+      background: #F5F0E8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+ 
+    .painting-mock {
+      width: 100%;
+      height: 140px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+ 
+    .caption-mock { width: 100%; }
+ 
+    .caption-title {
+      font-size: 8px;
+      font-weight: 600;
+      color: #2C2018;
+      font-family: Georgia, serif;
+      margin-bottom: 2px;
+    }
+ 
+    .caption-artist {
+      font-size: 7px;
+      color: #6B5540;
+      font-family: Georgia, serif;
+      margin-bottom: 1px;
+    }
+ 
+    .caption-credit {
+      font-size: 6px;
+      color: #9E8468;
+      font-style: italic;
+      font-family: Georgia, serif;
+    }
+ 
+    .phone-home {
+      height: 28px;
+      background: #F5F0E8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      border-top: 0.5px solid #D4C4A8;
+    }
+ 
+    .tab-icon {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #9E8468;
+      border-radius: 3px;
+    }
+ 
+    .section {
+      padding: 0 24px 64px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+ 
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: #9E8468;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+ 
+    .description {
+      font-size: 16px;
+      line-height: 1.9;
+      color: #4A3424;
+      font-family: Georgia, serif;
+    }
+ 
+    .description p + p {
+      margin-top: 1.2em;
+    }
+ 
+    .museums {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+ 
+    .museum-tag {
+      font-size: 12px;
+      color: #6B5540;
+      border: 0.5px solid #C4B49A;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+ 
+    .museum-tag:hover {
+      color: #2C1F14;
+      border-color: #8B6040;
+    }
+ 
+    .footer {
+      text-align: center;
+      padding: 32px 24px 48px;
+      border-top: 0.5px solid #D4C4A8;
+    }
+ 
+    .footer-text {
+      font-size: 12px;
+      color: #9E8468;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+ 
+    @media (max-width: 520px) {
+      .headline { font-size: 32px; }
+      .phone-frame:nth-child(3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <div class="hero">
+    <div class="logo">Decaf</div>
+    <h1 class="headline">A quiet place to look at paintings.</h1>
+    <p class="subhead">Over 23,000 public domain works from the world's greatest museums. Yours to explore, free from noise.</p>
+    <a href="https://apps.apple.com" class="appstore-btn">Download on the App Store</a>
+  </div>
+ 
+  <div class="divider"></div>
+ 
+  <div class="screenshots">
+    <div class="phone-frame">
+      <div class="phone-status"><div class="phone-notch"></div></div>
+      <div class="phone-screen">
+        <div class="painting-mock" style="background: #8B6040;"></div>
+        <div class="caption-mock">
+          <div class="caption-title">The Night Watch</div>
+          <div class="caption-artist">Rembrandt van Rijn</div>
+          <div class="caption-credit">Rijksmuseum, Amsterdam</div>
+        </div>
+      </div>
+      <div class="phone-home">
+        <div class="tab-icon"></div>
+        <div class="tab-icon" style="border-radius: 50%;"></div>
+      </div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-status"><div class="phone-notch"></div></div>
+      <div class="phone-screen">
+        <div class="painting-mock" style="background: #4A6B8A;"></div>
+        <div class="caption-mock">
+          <div class="caption-title">Water Lilies</div>
+          <div class="caption-artist">Claude Monet</div>
+          <div class="caption-credit">Art Institute of Chicago</div>
+        </div>
+      </div>
+      <div class="phone-home">
+        <div class="tab-icon"></div>
+        <div class="tab-icon" style="border-radius: 50%;"></div>
+      </div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-status"><div class="phone-notch"></div></div>
+      <div class="phone-screen">
+        <div class="painting-mock" style="background: #6B4A2A;"></div>
+        <div class="caption-mock">
+          <div class="caption-title">Self-Portrait</div>
+          <div class="caption-artist">Vincent van Gogh</div>
+          <div class="caption-credit">National Gallery of Art</div>
+        </div>
+      </div>
+      <div class="phone-home">
+        <div class="tab-icon"></div>
+        <div class="tab-icon" style="border-radius: 50%;"></div>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="section">
+    <p class="description">Decaf is a scrolling feed of public domain paintings from nine of the world's great museums, including the Metropolitan Museum of Art, the Rijksmuseum, the Art Institute of Chicago, and the Smithsonian Institution. These institutions have made their collections freely available through open access programs, and Decaf brings them together in a single, unhurried feed.</p>
+    <p class="description">There is no algorithm deciding what you see. No advertisements. No record of what you pause on or pass by. Paintings appear in a different order every time, drawn from over 23,000 works spanning centuries and continents.</p>
+    <p class="description">A one-time purchase of $1.99 is all that is ever required. No subscription. No upsell. No tricks.</p>
+  </div>
+ 
+  <div class="section">
+    <div class="section-label">Featured museums</div>
+    <div class="museums">
+      <a href="https://www.metmuseum.org" target="_blank" rel="noopener" class="museum-tag">Metropolitan Museum of Art</a>
+      <a href="https://www.rijksmuseum.nl/en" target="_blank" rel="noopener" class="museum-tag">Rijksmuseum</a>
+      <a href="https://www.artic.edu" target="_blank" rel="noopener" class="museum-tag">Art Institute of Chicago</a>
+      <a href="https://www.nga.gov" target="_blank" rel="noopener" class="museum-tag">National Gallery of Art</a>
+      <a href="https://www.si.edu" target="_blank" rel="noopener" class="museum-tag">Smithsonian Institution</a>
+      <a href="https://www.clevelandart.org" target="_blank" rel="noopener" class="museum-tag">Cleveland Museum of Art</a>
+      <a href="https://thewalters.org" target="_blank" rel="noopener" class="museum-tag">Walters Art Museum</a>
+      <a href="https://www.belvedere.at/en" target="_blank" rel="noopener" class="museum-tag">Belvedere, Vienna</a>
+    </div>
+  </div>
+ 
+  <div class="footer">
+    <p class="footer-text">$1.99 &middot; one-time purchase &middot; no subscriptions &middot; no ads &middot; ever</p>
+  </div>
+ 
+</body>
+</html>
+ 
