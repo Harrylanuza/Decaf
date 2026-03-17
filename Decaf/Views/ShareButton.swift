@@ -35,6 +35,7 @@ struct ShareButton: View {
             "\(artwork.title)" by \(artwork.artistName)
 
             I saw this painting on Decaf and thought of you.
+            https://www.artdecaf.app
             """
 
         // File URLs (saved offline favourites) must be read directly from disk —
