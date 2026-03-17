@@ -201,7 +201,19 @@ actor BelvedereService {
         let shortSide = min(width, height)
         guard ratio >= 0.4, ratio <= 2.0, shortSide >= 400 else { return nil }
 
-        let (artist, title, date) = parseCanvasLabel(canvas.label ?? "")
+        let label = canvas.label ?? ""
+
+        // Reject Artothek des Bundes loans — these are works the Belvedere does not
+        // own or license; their CC0 attribution field is unreliable for such items.
+        guard !label.contains("Artothek") else { return nil }
+
+        let (artist, title, date) = parseCanvasLabel(label)
+
+        // Reject works created in 1926 or later. The Belvedere incorrectly emits
+        // attribution == "null" for some in-copyright works (e.g. living artists,
+        // incomplete metadata). Under EU life+70 copyright, works from 1926 onward
+        // carry meaningful risk; the Belvedere's historic core is pre-1920 anyway.
+        if let year = Int(date.prefix(4)), year >= 1926 { return nil }
 
         // Object ID: the path component before "/manifest", e.g. "1-objects-395".
         let objectID = manifestURL.deletingLastPathComponent().lastPathComponent
