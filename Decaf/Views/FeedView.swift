@@ -118,6 +118,7 @@ struct FeedView: View {
             }
         }
         .padding(.horizontal, 48)
+        .frame(maxWidth: 480)
     }
 
     private var offlineBanner: some View {
@@ -154,6 +155,7 @@ struct FeedView: View {
             .padding(.vertical, 9)
             .overlay(Rectangle().stroke(Theme.body.opacity(0.4), lineWidth: 0.5))
         }
+        .frame(maxWidth: 480)
     }
 
     // MARK: - Data

@@ -61,6 +61,7 @@ struct OnboardingView: View {
                     .lineSpacing(5)
             }
             .padding(.horizontal, 48)
+            .frame(maxWidth: 560)
 
             Spacer()
             Spacer()
@@ -77,6 +78,7 @@ struct OnboardingView: View {
                 .foregroundStyle(Theme.ink)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 48)
+                .frame(maxWidth: 560)
 
             Spacer()
             Spacer()

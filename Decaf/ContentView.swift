@@ -3,8 +3,13 @@ import SwiftUI
 struct ContentView: View {
     @State private var selectedTab: Tab = .discover
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     enum Tab { case discover, cup }
+
+    // iPad (.regular) uses a taller bar to match its larger touch targets and
+    // proportionally larger safe-area insets at the bottom.
+    private var tabBarHeight: CGFloat { horizontalSizeClass == .regular ? 60 : 49 }
 
     var body: some View {
         ZStack {
@@ -55,7 +60,7 @@ struct ContentView: View {
                 tabButton(for: .discover, icon: "rectangle.stack")
                 tabButton(for: .cup,      icon: "cup.and.saucer")
             }
-            .frame(height: 49)
+            .frame(height: tabBarHeight)
         }
         // Extend linen behind the home-indicator safe area so the bar
         // blends seamlessly to the screen edge.
@@ -73,7 +78,7 @@ struct ContentView: View {
                     : Theme.body.opacity(0.32))
                 .animation(.easeInOut(duration: 0.2), value: selectedTab)
                 .frame(maxWidth: .infinity)
-                .frame(height: 49)
+                .frame(height: tabBarHeight)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

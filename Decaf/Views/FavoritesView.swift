@@ -6,6 +6,7 @@ struct FavoritesView: View {
     private var favorites: [FavoriteItem]
 
     @State private var selectedItem: FavoriteItem?
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         ZStack {
@@ -48,14 +49,11 @@ struct FavoritesView: View {
     }
 
     private var grid: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: 3),
-                    GridItem(.flexible(), spacing: 3),
-                ],
-                spacing: 3
-            ) {
+        // Use 4 columns on iPad (regular width) and 2 on iPhone (compact).
+        let columnCount = horizontalSizeClass == .regular ? 4 : 2
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: columnCount)
+        return ScrollView(.vertical, showsIndicators: false) {
+            LazyVGrid(columns: columns, spacing: 3) {
                 ForEach(validFavorites) { item in
                     ThumbnailCell(item: item)
                         .aspectRatio(1, contentMode: .fit)

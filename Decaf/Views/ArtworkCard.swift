@@ -58,14 +58,14 @@ struct ArtworkCard: View {
         // bounds in both axes. Without explicit maxHeight, AsyncImage may propose
         // unbounded height, causing tall narrow paintings to exceed the slot and clip.
         GeometryReader { slot in
-            // Guarantee at least 60 pt of clearance from the top of the screen so
-            // no painting ever overlaps the Dynamic Island or status bar. The
-            // AsyncImage container is framed to the usable region (below the top
-            // inset, above 20 pt bottom padding) and then offset down into place,
-            // so scaledToFit() centres the painting within that safe zone.
-            let topPad = max(topInset, 60)
+            // Use the actual safe-area inset as top padding — the system already
+            // accounts for the Dynamic Island, notch, and status bar. On iPad the
+            // inset is much smaller (~24 pt) so clamping to 60 would waste space.
+            // maxW is capped at 700 pt so paintings don't stretch excessively wide
+            // on large iPads; scaledToFit centres the image within that bound.
+            let topPad = max(topInset, 20)
             let usableHeight = slot.size.height - topPad - 60
-            let maxW = slot.size.width - 56   // 28 pt per side
+            let maxW = min(slot.size.width - 56, 700)   // 28 pt per side, 700 pt max
 
             AsyncImage(url: artwork.imageURL) { phase in
                 switch phase {
