@@ -6,12 +6,21 @@ struct ArtworkCard: View {
     /// Called once when the artwork's image fails to load. The feed uses this
     /// to silently remove the card so the user never sees a broken placeholder.
     var onImageFailure: (() -> Void)? = nil
+    /// Called whenever zoom crosses the 1.0 threshold so VerticalPageFeed can
+    /// disable UIPageViewController's gesture recognizers while the image is zoomed.
+    var onZoomChanged: ((Bool) -> Void)? = nil
     // Double-tap save confirmation state
     @State private var titleExpanded = false
     @State private var cupOpacity: Double = 0
     @State private var cupScale: CGFloat = 0.75
     @State private var cupOffset: CGFloat = 0
     @State private var animationTask: Task<Void, Never>?
+    // Pinch-to-zoom state
+    @State private var zoomScale: CGFloat = 1.0
+    @State private var lastZoomScale: CGFloat = 1.0
+    // Pan state
+    @State private var panOffset: CGSize = .zero
+    @State private var lastPanOffset: CGSize = .zero
 
     @Environment(\.modelContext) private var context
     @Query private var matches: [FavoriteItem]
@@ -30,6 +39,21 @@ struct ArtworkCard: View {
             VStack(spacing: 0) {
                 image(topInset: geo.safeAreaInsets.top)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onChange(of: artwork.id) {
+                        zoomScale = 1.0
+                        lastZoomScale = 1.0
+                        panOffset = .zero
+                        lastPanOffset = .zero
+                    }
+                    // Notify VerticalPageFeed when zoom crosses 1.0 so it can
+                    // toggle the UIPageViewController's gesture recognizers.
+                    .onChange(of: zoomScale) { oldValue, newValue in
+                        let wasZoomed = oldValue > 1.0
+                        let isNowZoomed = newValue > 1.0
+                        if wasZoomed != isNowZoomed {
+                            onZoomChanged?(isNowZoomed)
+                        }
+                    }
                     // Overlay anchored to the bottom of the image slot places the
                     // buttons just above the hairline that divides image from caption.
                     // No safe-area arithmetic needed — the image slot boundary is the
@@ -79,6 +103,9 @@ struct ArtworkCard: View {
                         .scaledToFit()
                         // Explicit finite bounds prevent tall paintings from overflowing.
                         .frame(maxWidth: maxW, maxHeight: usableHeight)
+                        // Scale applied before offset so pan moves the already-zoomed image.
+                        .scaleEffect(zoomScale)
+                        .offset(x: panOffset.width, y: panOffset.height)
                         // Gentle shadow lifts the painting off the linen ground.
                         .shadow(color: Theme.ink.opacity(0.10), radius: 18, x: 0, y: 6)
                         .transition(.opacity.animation(.easeInOut(duration: 0.5)))
@@ -92,14 +119,63 @@ struct ArtworkCard: View {
                     Color.clear
                 }
             }
-            // Frame to the usable region and shift it below the status bar.
+            // Frame to the usable region, clip zoom overflow, then shift below the status bar.
             .frame(width: slot.size.width, height: usableHeight)
+            .clipped()
             .offset(y: topPad)
             // Make the full usable area respond to gestures, not just image pixels.
             .contentShape(Rectangle())
             .onTapGesture(count: 2) {
-                performDoubleTap()
+                if zoomScale > 1.01 {
+                    // Reset zoom and pan together with a spring so it snaps back cleanly.
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        zoomScale = 1.0
+                        lastZoomScale = 1.0
+                        panOffset = .zero
+                        lastPanOffset = .zero
+                    }
+                } else {
+                    performDoubleTap()
+                }
             }
+            .gesture(
+                MagnificationGesture()
+                    .onChanged { value in
+                        // Multiply from the committed base so each new pinch
+                        // starts where the last one left off. Clamp to [1, 4]
+                        // so the image can't shrink below its natural size.
+                        let proposed = lastZoomScale * value
+                        zoomScale = min(max(proposed, 1.0), 4.0)
+                    }
+                    .onEnded { value in
+                        let committed = min(max(lastZoomScale * value, 1.0), 4.0)
+                        lastZoomScale = committed
+                        zoomScale = committed
+                    }
+            )
+            .simultaneousGesture(
+                DragGesture()
+                    .onChanged { value in
+                        // Only pan when zoomed; at scale 1.0 the UIPageViewController
+                        // handles the drag for paging and we don't interfere.
+                        guard zoomScale > 1.0 else { return }
+                        // Maximum pan in each axis is half the overhang: the amount the
+                        // scaled image extends beyond the slot edge on one side.
+                        let maxPanX = max(0, maxW         * (zoomScale - 1) / 2)
+                        let maxPanY = max(0, usableHeight * (zoomScale - 1) / 2)
+                        let proposed = CGSize(
+                            width:  lastPanOffset.width  + value.translation.width,
+                            height: lastPanOffset.height + value.translation.height
+                        )
+                        panOffset = CGSize(
+                            width:  min(max(proposed.width,  -maxPanX), maxPanX),
+                            height: min(max(proposed.height, -maxPanY), maxPanY)
+                        )
+                    }
+                    .onEnded { _ in
+                        lastPanOffset = panOffset
+                    }
+            )
             .overlay {
                 // Save confirmation: cup rises and fades. The linen circle
                 // behind the icon ensures it reads clearly on both pale and

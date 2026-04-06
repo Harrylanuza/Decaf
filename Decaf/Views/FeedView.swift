@@ -261,6 +261,9 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
         pvc.dataSource = context.coordinator
         pvc.delegate   = context.coordinator
 
+        // Store so the onZoomChanged callback can toggle gesture recognizers.
+        context.coordinator.pageViewController = pvc
+
         // Set the first page. artworks is guaranteed non-empty here because
         // FeedView only shows this view in its non-empty else branch.
         if let first = context.coordinator.makePage(at: 0) {
@@ -328,6 +331,9 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
         /// to restore — even if UIPageViewController's viewControllers array
         /// is transiently empty after a visibility-state change.
         var currentIndex: Int = 0
+        /// Weak reference used by the onZoomChanged callback to toggle gesture
+        /// recognizers — kept weak to avoid a retain cycle with the coordinator.
+        weak var pageViewController: UIPageViewController?
 
         init(
             artworks: [Artwork],
@@ -349,6 +355,14 @@ private struct VerticalPageFeed: UIViewControllerRepresentable {
             let artwork = artworks[index]
             var card = ArtworkCard(artwork: artwork)
             card.onImageFailure = { [weak self] in self?.onImageFailure(artwork.id) }
+            // When the card's zoom crosses 1.0, enable or disable the
+            // UIPageViewController's gesture recognizers so paging is blocked
+            // while the user is zoomed in and restored when they zoom back out.
+            card.onZoomChanged = { [weak self] isZoomed in
+                self?.pageViewController?.gestureRecognizers.forEach {
+                    $0.isEnabled = !isZoomed
+                }
+            }
             let vc = UIHostingController(
                 rootView: card
                     .modelContainer(modelContainer)
