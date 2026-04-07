@@ -30,7 +30,12 @@ import Foundation
 actor BelvedereService {
     static let shared = BelvedereService()
 
-    private let session = URLSession.shared
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.default
+        cfg.timeoutIntervalForRequest  = 20
+        cfg.timeoutIntervalForResource = 60
+        return URLSession(configuration: cfg)
+    }()
 
     private static let collectionBase =
         "https://sammlung.belvedere.at/apis/iiif/presentation/v2/collection/module/objects"

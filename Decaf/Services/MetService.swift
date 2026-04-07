@@ -4,7 +4,12 @@ actor MetService {
     static let shared = MetService()
 
     private let baseURL = URL(string: "https://collectionapi.metmuseum.org/public/collection/v1")!
-    private let session = URLSession.shared
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.default
+        cfg.timeoutIntervalForRequest  = 20
+        cfg.timeoutIntervalForResource = 60
+        return URLSession(configuration: cfg)
+    }()
 
     // MARK: - API Response Types
 

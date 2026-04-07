@@ -4,7 +4,12 @@ actor RijksmuseumService {
     static let shared = RijksmuseumService()
 
     private let baseURL = URL(string: "https://data.rijksmuseum.nl/oai")!
-    private let session = URLSession.shared
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.default
+        cfg.timeoutIntervalForRequest  = 20
+        cfg.timeoutIntervalForResource = 60
+        return URLSession(configuration: cfg)
+    }()
 
     // Painting-focused OAI-PMH sets harvested in full each session.
     private let paintingSets = [

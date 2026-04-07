@@ -4,7 +4,12 @@ actor ArtInstituteService {
     static let shared = ArtInstituteService()
 
     private let searchURL = URL(string: "https://api.artic.edu/api/v1/artworks/search")!
-    private let session   = URLSession.shared
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.default
+        cfg.timeoutIntervalForRequest  = 20
+        cfg.timeoutIntervalForResource = 60
+        return URLSession(configuration: cfg)
+    }()
     private let imageBase = "https://www.artic.edu/iiif/2"
 
     // Cached after the first probe so subsequent calls make only one request.

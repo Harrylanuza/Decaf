@@ -19,7 +19,12 @@ import Foundation
 actor ClevelandService {
     static let shared = ClevelandService()
 
-    private let session = URLSession.shared
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.default
+        cfg.timeoutIntervalForRequest  = 20
+        cfg.timeoutIntervalForResource = 60
+        return URLSession(configuration: cfg)
+    }()
     private static let baseURL = "https://openaccess-api.clevelandart.org/api/artworks/"
 
     // Total CC0 painting count, cached after the first call so every subsequent
