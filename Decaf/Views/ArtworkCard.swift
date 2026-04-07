@@ -66,8 +66,8 @@ struct ArtworkCard: View {
             // maxW is capped at 700 pt so paintings don't stretch excessively wide
             // on large iPads; scaledToFit centres the image within that bound.
             let topPad = max(topInset, horizontalSizeClass == .regular ? 20 : 60)
-            let usableHeight = slot.size.height - topPad - 60
-            let maxW = min(slot.size.width - 56, 700)   // 28 pt per side, 700 pt max
+            let usableHeight = max(0, slot.size.height - topPad - 60)
+            let maxW = max(0, min(slot.size.width - 56, 700))   // 28 pt per side, 700 pt max
 
             AsyncImage(url: artwork.imageURL) { phase in
                 switch phase {
