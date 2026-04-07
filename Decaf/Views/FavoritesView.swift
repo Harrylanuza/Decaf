@@ -145,9 +145,5 @@ private struct CupDetailView: View {
                 .padding(.top, 60)
                 .padding(.leading, 12)
             }
-            // Swipe down to dismiss — intuitive complement to the close button.
-            .gesture(DragGesture().onEnded { value in
-                if value.translation.height > 80 { dismiss() }
-            })
     }
 }
