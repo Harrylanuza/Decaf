@@ -48,6 +48,9 @@ struct FSGService {
               let data    = try? Data(contentsOf: url),
               let records = try? JSONDecoder().decode([FSGRecord].self, from: data)
         else {
+            #if DEBUG
+            print("⚠️ FSGService: failed to load fsg_paintings.json from bundle")
+            #endif
             pool = []
             return
         }

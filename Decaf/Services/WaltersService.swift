@@ -42,6 +42,9 @@ struct WaltersService {
               let data    = try? Data(contentsOf: url),
               let records = try? JSONDecoder().decode([WaltersRecord].self, from: data)
         else {
+            #if DEBUG
+            print("⚠️ WaltersService: failed to load walters_paintings.json from bundle")
+            #endif
             pool = []
             return
         }

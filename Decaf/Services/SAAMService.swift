@@ -43,6 +43,9 @@ struct SAAMService {
               let data    = try? Data(contentsOf: url),
               let records = try? JSONDecoder().decode([SAAMRecord].self, from: data)
         else {
+            #if DEBUG
+            print("⚠️ SAAMService: failed to load saam_paintings.json from bundle")
+            #endif
             pool = []
             return
         }

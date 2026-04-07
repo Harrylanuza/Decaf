@@ -44,6 +44,9 @@ struct NGAService {
               let data = try? Data(contentsOf: url),
               let records = try? JSONDecoder().decode([NGARecord].self, from: data)
         else {
+            #if DEBUG
+            print("⚠️ NGAService: failed to load nga_paintings.json from bundle")
+            #endif
             pool = []
             return
         }
