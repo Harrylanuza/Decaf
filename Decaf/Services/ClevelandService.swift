@@ -72,7 +72,7 @@ actor ClevelandService {
         if cachedTotal == nil {
             cachedTotal = try await fetchTotal()
         }
-        let total = cachedTotal!
+        guard let total = cachedTotal else { return [] }
         // Fetch 3× candidates so the aspect-ratio and palm-leaf filters still
         // yield at least `count` artworks even with a ~30% rejection rate.
         let batchSize = count * 3
@@ -171,7 +171,7 @@ actor ClevelandService {
         return Artwork(
             id:         "cma-\(obj.id)",
             imageURL:   imageURL,
-            title:      (obj.title ?? "").isEmpty ? "Untitled" : obj.title!,
+            title:      (obj.title ?? "").isEmpty ? "Untitled" : obj.title ?? "Untitled",
             artistName: artist.isEmpty ? "Unknown Artist" : artist,
             date:       obj.creation_date ?? "",
             credit:     "Cleveland Museum of Art",
