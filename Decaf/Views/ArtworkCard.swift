@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct ArtworkCard: View {
     let artwork: Artwork
@@ -157,9 +158,15 @@ struct ArtworkCard: View {
                 Text(artwork.credit)
                     .font(.system(.caption2).italic())
                     .foregroundStyle(Theme.muted.opacity(0.75))
+                    .underline(artwork.museumURL != nil, color: Theme.muted.opacity(0.4))
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .padding(.top, 6)
+                    .onTapGesture {
+                        if let url = artwork.museumURL {
+                            UIApplication.shared.open(url)
+                        }
+                    }
             }
             .padding(.horizontal, 28)
             .padding(.top, 14)
