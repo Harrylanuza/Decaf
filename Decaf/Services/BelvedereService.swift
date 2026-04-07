@@ -228,7 +228,7 @@ actor BelvedereService {
             artistName: artist.isEmpty   ? "Unknown Artist" : artist,
             date:       date,
             credit:     "Belvedere, Vienna",
-            museumURL:  URL(string: "https://sammlung.belvedere.at/objects/\(objectID)")
+            museumURL:  URL(string: "https://sammlung.belvedere.at/objects/\(objectID.components(separatedBy: "-").last ?? objectID)")
         )
     }
 
