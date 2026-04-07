@@ -12,8 +12,6 @@ struct ArtworkCard: View {
     @State private var cupScale: CGFloat = 0.75
     @State private var cupOffset: CGFloat = 0
     @State private var animationTask: Task<Void, Never>?
-    // Full-screen zoom state
-    @State private var showZoom = false
 
     @Environment(\.modelContext) private var context
     @Query private var matches: [FavoriteItem]
@@ -32,9 +30,6 @@ struct ArtworkCard: View {
             VStack(spacing: 0) {
                 image(topInset: geo.safeAreaInsets.top)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .onChange(of: artwork.id) {
-                        showZoom = false
-                    }
                     // Overlay anchored to the bottom of the image slot places the
                     // buttons just above the hairline that divides image from caption.
                     // No safe-area arithmetic needed — the image slot boundary is the
@@ -53,9 +48,6 @@ struct ArtworkCard: View {
             .frame(width: geo.size.width, height: geo.size.height)
             .background(Theme.background)
             .clipped()
-        }
-        .fullScreenCover(isPresented: $showZoom) {
-            PaintingZoomView(url: artwork.imageURL)
         }
     }
 
@@ -100,17 +92,13 @@ struct ArtworkCard: View {
                     Color.clear
                 }
             }
-            // Frame to the usable region, clip zoom overflow, then shift below the status bar.
+            // Frame to the usable region and shift it below the status bar.
             .frame(width: slot.size.width, height: usableHeight)
-            .clipped()
             .offset(y: topPad)
             // Make the full usable area respond to gestures, not just image pixels.
             .contentShape(Rectangle())
             .onTapGesture(count: 2) {
                 performDoubleTap()
-            }
-            .onTapGesture(count: 1) {
-                showZoom = true
             }
             .overlay {
                 // Save confirmation: cup rises and fades. The linen circle
