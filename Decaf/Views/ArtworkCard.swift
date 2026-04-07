@@ -13,6 +13,7 @@ struct ArtworkCard: View {
     @State private var cupOffset: CGFloat = 0
     @State private var animationTask: Task<Void, Never>?
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.modelContext) private var context
     @Query private var matches: [FavoriteItem]
 
@@ -63,7 +64,7 @@ struct ArtworkCard: View {
             // inset is much smaller (~24 pt) so clamping to 60 would waste space.
             // maxW is capped at 700 pt so paintings don't stretch excessively wide
             // on large iPads; scaledToFit centres the image within that bound.
-            let topPad = max(topInset, 20)
+            let topPad = max(topInset, horizontalSizeClass == .regular ? 20 : 60)
             let usableHeight = slot.size.height - topPad - 60
             let maxW = min(slot.size.width - 56, 700)   // 28 pt per side, 700 pt max
 
