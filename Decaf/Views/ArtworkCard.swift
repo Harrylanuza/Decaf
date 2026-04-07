@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UIKit
 
 struct ArtworkCard: View {
     let artwork: Artwork
@@ -16,6 +15,7 @@ struct ArtworkCard: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.modelContext) private var context
+    @Environment(\.openURL) private var openURL
     @Query private var matches: [FavoriteItem]
 
     init(artwork: Artwork) {
@@ -164,7 +164,7 @@ struct ArtworkCard: View {
                     .padding(.top, 6)
                     .onTapGesture {
                         if let url = artwork.museumURL {
-                            UIApplication.shared.open(url)
+                            openURL(url)
                         }
                     }
             }
