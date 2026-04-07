@@ -76,13 +76,15 @@ actor RijksmuseumService {
                     // Lightweight IIIF info.json probe — no image download.
                     guard let dims = await iiifImageDimensions(imageURL: imageURL),
                           dims.isSuitable else { return nil }
+                    let artworkID = record.catalogNumber.isEmpty ? record.lodIdentifier : record.catalogNumber
                     return Artwork(
-                        id: record.catalogNumber.isEmpty ? record.lodIdentifier : record.catalogNumber,
-                        imageURL: imageURL,
-                        title: record.title.isEmpty ? "Untitled" : record.title,
+                        id:         artworkID,
+                        imageURL:   imageURL,
+                        title:      record.title.isEmpty ? "Untitled" : record.title,
                         artistName: record.creator.isEmpty ? "Unknown Artist" : record.creator,
-                        date: record.date,
-                        credit: "Rijksmuseum, Amsterdam"
+                        date:       record.date,
+                        credit:     "Rijksmuseum, Amsterdam",
+                        museumURL:  URL(string: "https://www.rijksmuseum.nl/en/collection/\(artworkID)")
                     )
                 }
             }

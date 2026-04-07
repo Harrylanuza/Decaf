@@ -122,12 +122,13 @@ actor MetService {
         }
 
         return Artwork(
-            id: String(obj.objectID),
-            imageURL: imageURL,
-            title: obj.title.isEmpty ? "Untitled" : obj.title,
+            id:         String(obj.objectID),
+            imageURL:   imageURL,
+            title:      obj.title.isEmpty ? "Untitled" : obj.title,
             artistName: obj.artistDisplayName.isEmpty ? "Unknown Artist" : obj.artistDisplayName,
-            date: obj.objectDate,
-            credit: obj.repository.isEmpty ? "The Metropolitan Museum of Art" : obj.repository
+            date:       obj.objectDate,
+            credit:     obj.repository.isEmpty ? "The Metropolitan Museum of Art" : obj.repository,
+            museumURL:  URL(string: "https://www.metmuseum.org/art/collection/search/\(obj.objectID)")
         )
     }
 }

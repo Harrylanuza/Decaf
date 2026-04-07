@@ -228,7 +228,8 @@ struct ArtworkCard: View {
         title: "Self-Portrait with a Straw Hat",
         artistName: "Vincent van Gogh",
         date: "1887",
-        credit: "The Metropolitan Museum of Art"
+        credit: "The Metropolitan Museum of Art",
+        museumURL: URL(string: "https://www.metmuseum.org/art/collection/search/437984")
     ))
     .ignoresSafeArea()
 }

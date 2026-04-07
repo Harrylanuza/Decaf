@@ -70,7 +70,8 @@ struct WaltersService {
             title:      record.title.isEmpty ? "Untitled" : record.title,
             artistName: record.artist.isEmpty ? "Unknown Artist" : record.artist,
             date:       record.date,
-            credit:     "The Walters Art Museum"
+            credit:     "The Walters Art Museum",
+            museumURL:  URL(string: "https://art.thewalters.org/detail/\(record.id)")
         )
     }
 }

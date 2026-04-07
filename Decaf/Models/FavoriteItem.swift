@@ -10,17 +10,19 @@ final class FavoriteItem {
     var imageURLString: String   // remote URL; kept as offline fallback
     var localImagePath: String?  // relative path inside Application Support
     var credit: String
+    var museumURLString: String?
     var savedAt: Date
 
     init(from artwork: Artwork) {
-        self.artworkID      = artwork.id
-        self.title          = artwork.title
-        self.artistOrAuthor = artwork.artistName
-        self.date           = artwork.date
-        self.imageURLString = artwork.imageURL.absoluteString
-        self.localImagePath = nil   // set asynchronously after download
-        self.credit         = artwork.credit
-        self.savedAt        = Date()
+        self.artworkID       = artwork.id
+        self.title           = artwork.title
+        self.artistOrAuthor  = artwork.artistName
+        self.date            = artwork.date
+        self.imageURLString  = artwork.imageURL.absoluteString
+        self.localImagePath  = nil   // set asynchronously after download
+        self.credit          = artwork.credit
+        self.museumURLString = artwork.museumURL?.absoluteString
+        self.savedAt         = Date()
     }
 
     /// Returns an `Artwork` value for displaying this favourite.
@@ -41,7 +43,8 @@ final class FavoriteItem {
             title: title,
             artistName: artistOrAuthor,
             date: date,
-            credit: credit
+            credit: credit,
+            museumURL: museumURLString.flatMap(URL.init)
         )
     }
 }

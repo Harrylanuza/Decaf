@@ -31,6 +31,7 @@ struct SAAMService {
         let date: String
         let medium: String
         let idsId: String
+        let pageURL: String?
     }
 
     // Full painting pool loaded once from the bundle — nil only if the JSON
@@ -71,7 +72,8 @@ struct SAAMService {
             title:      record.title.isEmpty ? "Untitled" : record.title,
             artistName: record.artist.isEmpty ? "Unknown Artist" : record.artist,
             date:       record.date,
-            credit:     "Smithsonian Institution"
+            credit:     "Smithsonian Institution",
+            museumURL:  record.pageURL.flatMap(URL.init)
         )
     }
 }

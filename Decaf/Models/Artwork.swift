@@ -7,4 +7,5 @@ struct Artwork: Identifiable {
     let artistName: String
     let date: String
     let credit: String
+    let museumURL: URL?
 }

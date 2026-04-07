@@ -73,7 +73,8 @@ struct NGAService {
             title:      record.title.isEmpty ? "Untitled" : record.title,
             artistName: record.artist.isEmpty ? "Unknown Artist" : record.artist,
             date:       record.date,
-            credit:     "National Gallery of Art, Washington"
+            credit:     "National Gallery of Art, Washington",
+            museumURL:  URL(string: "https://www.nga.gov/collection/art-object-page.\(record.id).html")
         )
     }
 }

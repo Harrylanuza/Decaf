@@ -112,7 +112,8 @@ actor ArtInstituteService {
             title:      (obj.title ?? "").isEmpty ? "Untitled" : obj.title ?? "Untitled",
             artistName: artist.isEmpty ? "Unknown Artist" : artist,
             date:       obj.dateDisplay ?? "",
-            credit:     "Art Institute of Chicago"
+            credit:     "Art Institute of Chicago",
+            museumURL:  URL(string: "https://www.artic.edu/artworks/\(obj.id)")
         )
     }
 }

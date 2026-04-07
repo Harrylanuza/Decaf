@@ -39,6 +39,7 @@ actor ClevelandService {
 
     private struct CMAObject: Decodable {
         let id: Int
+        let accession_number: String?
         let title: String?
         let creation_date: String?
         let technique: String?
@@ -110,7 +111,7 @@ actor ClevelandService {
             URLQueryItem(name: "has_image", value: "1"),
             URLQueryItem(name: "limit",     value: String(limit)),
             URLQueryItem(name: "skip",      value: String(skip)),
-            URLQueryItem(name: "fields",    value: "id,title,creation_date,technique,images,creators,creditline"),
+            URLQueryItem(name: "fields",    value: "id,accession_number,title,creation_date,technique,images,creators,creditline"),
         ]
 
         guard let url = components.url else { throw URLError(.badURL) }
@@ -164,13 +165,17 @@ actor ClevelandService {
                    ?? raw
         }()
 
+        let museumURL: URL? = obj.accession_number.flatMap {
+            URL(string: "https://www.clevelandart.org/art/\($0)")
+        }
         return Artwork(
             id:         "cma-\(obj.id)",
             imageURL:   imageURL,
             title:      (obj.title ?? "").isEmpty ? "Untitled" : obj.title!,
             artistName: artist.isEmpty ? "Unknown Artist" : artist,
             date:       obj.creation_date ?? "",
-            credit:     "Cleveland Museum of Art"
+            credit:     "Cleveland Museum of Art",
+            museumURL:  museumURL
         )
     }
 }
