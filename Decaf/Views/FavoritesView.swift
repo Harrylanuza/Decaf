@@ -125,29 +125,31 @@ private struct CupDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        // ignoresSafeArea() is applied directly to ArtworkCard — the same way
-        // VerticalPageFeed does it via UIHostingController. This lets the card's
-        // own internal safe-area accounting work correctly; wrapping it in an
-        // outer GeometryReader causes the card to double-count the top inset,
-        // pushing the painting too far down.
-        ArtworkCard(artwork: artwork)
-            .ignoresSafeArea()
-            .overlay(alignment: .topLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 13, weight: .light))
-                        .foregroundStyle(Theme.muted)
-                        .frame(width: 32, height: 32)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                // Sit just below the Dynamic Island / status bar.
-                .padding(.top, 60)
-                .padding(.leading, 12)
+        // ZStack lets ArtworkCard fill the full screen (via ignoresSafeArea) while
+        // the dismiss button sits in its own layer that respects the safe area.
+        // The button is therefore placed just below the status bar / Dynamic Island
+        // without any hardcoded offset, matching the position of an iOS back button.
+        ZStack(alignment: .topLeading) {
+            // ignoresSafeArea() is applied directly to ArtworkCard — the same way
+            // VerticalPageFeed does it via UIHostingController. This lets the card's
+            // own internal safe-area accounting work correctly.
+            ArtworkCard(artwork: artwork)
+                .ignoresSafeArea()
+
+            Button { dismiss() } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(Theme.muted)
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
-            // Swipe down to dismiss — intuitive complement to the close button.
-            .gesture(DragGesture().onEnded { value in
-                if value.translation.height > 80 { dismiss() }
-            })
+            .buttonStyle(.plain)
+            .padding(.top, 8)
+            .padding(.leading, 12)
+        }
+        // Swipe down to dismiss — intuitive complement to the close button.
+        .gesture(DragGesture().onEnded { value in
+            if value.translation.height > 80 { dismiss() }
+        })
     }
 }
