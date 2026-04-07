@@ -16,7 +16,8 @@ struct ImageStore {
     /// The directory that holds all saved images, created on first access.
     private static var directory: URL {
         let base = FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
         let dir = base.appendingPathComponent(subdirectory)
         try? FileManager.default.createDirectory(
             at: dir, withIntermediateDirectories: true
@@ -42,7 +43,8 @@ struct ImageStore {
     /// Returns `nil` if the file does not exist on disk.
     static func fileURL(for relativePath: String) -> URL? {
         let base = FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
         let url = base.appendingPathComponent(relativePath)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
