@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- The app does not perform cross-app tracking. -->
+	<key>NSPrivacyTracking</key>
+	<false/>
+
+	<!-- No tracking domains — the app contacts only public museum APIs. -->
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<!-- No user data is collected, stored, or transmitted to any server. -->
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+
+	<!--
+		Required-reason APIs used by the app:
+
+		NSPrivacyAccessedAPICategoryUserDefaults — SeenStore records the IDs of
+		paintings the user has already seen so they are not shown again in the
+		same session. The data never leaves the device.
+		Reason CA92.1: read/write user defaults within the same app.
+	-->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

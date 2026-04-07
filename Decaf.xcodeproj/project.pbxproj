@@ -37,6 +37,7 @@
 		0000000000000000000000A1 /* WaltersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A0 /* WaltersService.swift */; };
 		0000000000000000000000A3 /* BelvedereService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2 /* BelvedereService.swift */; };
 		0000000000000000000000A5 /* AppIconPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A4 /* AppIconPreview.swift */; };
+		0000000000000000000000A7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A6 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		0000000000000000000000A0 /* WaltersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaltersService.swift; sourceTree = "<group>"; };
 		0000000000000000000000A2 /* BelvedereService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BelvedereService.swift; sourceTree = "<group>"; };
 		0000000000000000000000A4 /* AppIconPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconPreview.swift; sourceTree = "<group>"; };
+		0000000000000000000000A6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				000000000000000000000022 /* DecafApp.swift */,
 				000000000000000000000023 /* ContentView.swift */,
 				000000000000000000000080 /* Theme.swift */,
+				0000000000000000000000A6 /* PrivacyInfo.xcprivacy */,
 				000000000000000000000030 /* Models */,
 				000000000000000000000040 /* Views */,
 				000000000000000000000050 /* Services */,
@@ -224,6 +227,7 @@
 				000000000000000000000095 /* saam_paintings.json in Resources */,
 				000000000000000000000097 /* fsg_paintings.json in Resources */,
 				00000000000000000000009F /* walters_paintings.json in Resources */,
+				0000000000000000000000A7 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
